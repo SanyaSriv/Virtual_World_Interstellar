@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+        /* p{float:right;clear:right;display:block;padding-right: 55px; padding-top: 5px; text-align: left;} */
+    </style>
+  <head>
+    <meta charset="utf-8" />
+    <title>Change a point color</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="700" height="700">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="asg3.js"></script>
+    <script src="point.js"></script>
+    <script src="triangle.js"></script>
+    <script src="circle.js"></script>
+    <script src="cube.js"></script>
+    <script src="triangle3d.js"></script>
+    <script src="cylinder.js"></script>
+    <script src="lib/cuon-matrix.js"></script>
+    <br><br>
+    <p id="fps"> XXX </p>
+    <label>Animation:</input>
+    <input for="name" type="button" id="hello_animation_on" value="Animation On"></input>
+    <input for="name" type="button" id="hello_animation_off" value="Animation Off"></input>
+    <br> <br>
+    <label for="name">Camera Angle: Horizontal</label>
+    <input type="range" id="camera_angle" min=0 max=360 value=0 class="slider"></input>
+    <label for="name">Camera Angle: Vertical</label>
+    <input type="range" id="camera_angle2" min=0 max=90 value=0 class="slider"></input>
+    <br>
+    <label for="name">Global scaling</label>
+    <input type="range" id="global_scale" min=50 max=150 value=100 class="slider"></input>
+    <br>
+    <label for="name">Legs: Vertical</label>
+    <input type="range" id="wall_e_leg_vertical" min=0 max=100 value=50 class="slider"></input>
+    <br>
+    <label for="name">Arms: Vertical</label>
+    <input type="range" id="arm_vertical" min=-50 max=45 value=0 class="slider"></input>
+    <br>
+    <label for="name">Forearm1: rotation - open + close forearm</label>
+    <input type="range" id="left_forearm" min=-65 max=30 value=0 class="slider"></input>
+    <br>
+    <label for="name">Forearm2: scale</label>
+    <input type="range" id="left_forearm_scale" min=5 max=145 value=100 class="slider"></input>
+    <br>
+    <label for="name">Hands: open and close movement</label>
+    <input type="range" id="hands_open_close" min=-45 max=20 value = 0 class="slider"></input>
+    <br>
+    <label for="name">Hands: Rotate</label>
+    <input type="range" id="hands_rotate" min=-25 max=25 value=0 class="slider"></input>
+    <br>
+    <label for="name">Upper Neck: Rotate</label>
+    <input type="range" id="neck_upper_rotate" min=-25 max=25 value=0 class="slider"></input>
+    <br>
+    <label for="name">Lower Neck Rotate: front-back</label>
+    <input type="range" id="neck_front_back" min=-20 max=40 value=0 class="slider"></input>
+  </body>
+</html>
