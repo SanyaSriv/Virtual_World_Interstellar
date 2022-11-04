@@ -19,9 +19,11 @@ var FSHADER_SOURCE =
   `precision mediump float;
   varying vec2 v_UV;
   uniform vec4 u_FragColor;
+  uniform sampler2D u_Sampler0;
   void main() {
     gl_FragColor = u_FragColor;
     gl_FragColor = vec4(v_UV, 1.0, 1.0);
+    gl_FragColor = texture2D(u_Sampler0, v_UV);
   }`;
 
 // declaring the global variables
@@ -51,7 +53,7 @@ let special_shift_animation = 0;
 let mouse_rotate_x = 0;
 let mouse_rotate_y = 0;
 let mouse_rotate_z = 0;
-
+let u_Sampler0;
 // global animation variables
 let hello_animation_state = 0;
 let animation_leg_rotation = 0;
@@ -76,6 +78,35 @@ function AddActionsToHtmlUI() {
   document.addEventListener('mousedown', function (ev) {special_shift_animation = ev.shiftKey; ticker = 0;});
 }
 
+function initTextures(gl, n) {
+  var image = new Image();
+  if (!image) {
+    console.log("Failed to get the image object");
+    return false;
+  }
+
+  image.onload = function() {loadTexture(image);};
+  image.src = "wall_e_taking_care.jpeg";
+  // image.crossorigin = "anonymous";
+  return true;
+}
+
+function loadTexture(image) {
+
+  var texture = gl.createTexture();
+  if (!texture) {
+    console.log('Failed to get the texture');
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+  gl.uniform1i(u_Sampler0, 0);
+
+}
 function scaleVerticalLegMovement() {
   leg_vertical_movement -= 50;
   leg_vertical_movement /= 300;
@@ -212,6 +243,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0");
+  if (!u_Sampler0) {
+    console.log("Failed to get the u_sampler location");
+    return;
+  }
+
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, identityM.elements);
@@ -282,6 +319,8 @@ function main() {
     }
   }
   }
+
+  initTextures();
   // canvas.onmousemove = function(ev){if (ev.buttons == 1) {click(ev)}};
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
