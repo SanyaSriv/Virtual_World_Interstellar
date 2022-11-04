@@ -1,27 +1,34 @@
 // Vertex shader program
 // removing the global scale matrix (u_GlobalScaleMatrix) from this for now
 var VSHADER_SOURCE =
-  `attribute vec4 a_Position;
+  `precision mediump float;
+  attribute vec4 a_Position;
+  attribute vec2 a_UV;
+  varying vec2 v_UV;
   uniform mat4 u_ModelMatrix;
   uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ProjectionMatrix;
   uniform mat4 u_ViewMatrix;
   void main() {
     gl_Position = u_ViewMatrix * u_ProjectionMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+    v_UV = a_UV;
   }`;
 
 // Fragment shader program
 var FSHADER_SOURCE =
   `precision mediump float;
+  varying vec2 v_UV;
   uniform vec4 u_FragColor;
   void main() {
     gl_FragColor = u_FragColor;
+    gl_FragColor = vec4(v_UV, 1.0, 1.0);
   }`;
 
 // declaring the global variables
 let canvas;
 let gl;
 let a_Position;
+let a_UV;
 let u_PointSize;
 let u_FragColor;
 let g_globalAngle = 0;
@@ -107,7 +114,7 @@ function renderScene() {
   // console.log(global_scale);
   // main body
   var body = new Cube();
-  body.color = [254/255, 175/255, 52/255, 1.0];
+  body.color = [1, 0, 0, 1.0];
   body.matrix.setTranslate(-0.5, -0.5, -0.5);
   body.matrix.scale(0.5, 0.5, 0.5);
   body.render();
@@ -149,6 +156,16 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of a_Position');
     return;
   }
+
+  // get the storage location for a_UV
+  a_UV = gl.getAttribLocation(gl.program, 'a_UV');
+  if (a_UV < 0) {
+    console.log('Failed to get the storage location of a_UV');
+    return;
+  }
+
+  // // getting the location for v_UV;
+  // v_UV = gl.getVary
 
   // get the storage location of u_PointSize
   u_PointSize = gl.getUniformLocation(gl.program, 'u_PointSize');
