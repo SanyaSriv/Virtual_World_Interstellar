@@ -10,7 +10,7 @@ var VSHADER_SOURCE =
   uniform mat4 u_ProjectionMatrix;
   uniform mat4 u_ViewMatrix;
   void main() {
-    gl_Position = u_ViewMatrix * u_ProjectionMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+    gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
   }`;
 
@@ -20,10 +20,23 @@ var FSHADER_SOURCE =
   varying vec2 v_UV;
   uniform vec4 u_FragColor;
   uniform sampler2D u_Sampler0;
+  uniform sampler2D u_Sampler1;
+  uniform sampler2D u_Sampler2;
+  uniform int u_whichTexture;
   void main() {
-    gl_FragColor = u_FragColor;
-    gl_FragColor = vec4(v_UV, 1.0, 1.0);
-    gl_FragColor = texture2D(u_Sampler0, v_UV);
+    if (u_whichTexture == -2) {
+      gl_FragColor = u_FragColor;
+    } else if (u_whichTexture == -1) {
+      gl_FragColor = vec4(v_UV, 1.0, 1.0);
+    } else if (u_whichTexture == 0) {
+      gl_FragColor = texture2D(u_Sampler0, v_UV);
+    } else if (u_whichTexture == 1){
+      gl_FragColor = texture2D(u_Sampler1, v_UV);
+    } else if (u_whichTexture == 2) {
+      gl_FragColor = texture2D(u_Sampler2, v_UV);
+    } else {
+      gl_FragColor = vec4(1, 0.2, 0.2, 1);
+    }
   }`;
 
 // declaring the global variables
@@ -53,7 +66,8 @@ let special_shift_animation = 0;
 let mouse_rotate_x = 0;
 let mouse_rotate_y = 0;
 let mouse_rotate_z = 0;
-let u_Sampler0;
+let u_Sampler0, u_Sampler1, u_Sampler2;
+let u_whichTexture;
 // global animation variables
 let hello_animation_state = 0;
 let animation_leg_rotation = 0;
@@ -79,33 +93,71 @@ function AddActionsToHtmlUI() {
 }
 
 function initTextures(gl, n) {
-  var image = new Image();
-  if (!image) {
-    console.log("Failed to get the image object");
+
+  // doing it for image 1
+  var image1 = new Image();
+  var image2 = new Image();
+  var image3 = new Image();
+
+  if (!image1) {
+    console.log("Failed to get the image1 object");
+    return false;
+  }
+  if (!image2) {
+    console.log("Failed to get the image2 object");
+    return false;
+  }
+  if (!image3) {
+    console.log("Failed to get the image3 object");
     return false;
   }
 
-  image.onload = function() {loadTexture(image);};
-  image.src = "wall_e_taking_care.jpeg";
-  // image.crossorigin = "anonymous";
+  image1.onload = function() {loadTexture(image1, 0, u_Sampler0);};
+  image2.onload = function() {loadTexture(image2, 1, u_Sampler1);};
+  image3.onload = function() {loadTexture(image3, 2, u_Sampler2);};
+
+  image1.src = "wall_e_taking_care.jpeg";
+  image2.src = "1024px-SkyboxS1_right.png";
+  image3.src = "bh.jpeg";
+
   return true;
 }
 
-function loadTexture(image) {
+var texture1, texture2;
 
-  var texture = gl.createTexture();
+function loadTexture(image, number, u_Sampler) {
+
+  texture = gl.createTexture();
   if (!texture) {
     console.log('Failed to get the texture');
     return false;
   }
 
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.uniform1i(u_Sampler0, 0);
-
+  if (number === 0) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler, 0);
+  } else if (number === 1) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler, 1);
+  } else if (number == 2) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler, 2);
+  }
+  console.log("Loaded Texture", image);
 }
 function scaleVerticalLegMovement() {
   leg_vertical_movement -= 50;
@@ -121,8 +173,10 @@ function scaleVerticalArmMovement() {
   renderScene();
 }
 
-// Function to render all shapes stored in g_points_array
-// we need a way to store how and when exactly was the butterfly drawn
+var g_eye = [0,0,7]
+var g_at = [0,0,-100]
+var g_up = [0,1,0]
+
 function renderScene() {
   // Clear the canvas
   // checkig for the leg movement - if it is not the default
@@ -136,19 +190,48 @@ function renderScene() {
   globalRotate.rotate(combined_y_rotation, 1, 0, 0);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotate.elements);
 
+  // setting up the projection matrix
+  var projMatrix = new Matrix4();
+  projMatrix.setPerspective(50, canvas.width/canvas.height, 0.1, 100);
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMatrix.elements);
+
+  // setting up the view matrix
+  var viewMat = new Matrix4();
+  viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2], g_at[0],g_at[1],g_at[2], g_up[0],g_up[1],g_up[2]); // eye, at, up
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
+
   // setting up the scaling
   // var scaling_mat = new Matrix4().scale((global_scale / 100) * annimation_zoom, (global_scale / 100) * annimation_zoom, (global_scale / 100) * annimation_zoom);
   // gl.uniformMatrix4fv(u_GlobalScaleMatrix, false, scaling_mat.elements);
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
+  gl.clear(gl.COLOR_BUFFER_BIT);
   // console.log(global_scale);
+
+
   // main body
   var body = new Cube();
   body.color = [1, 0, 0, 1.0];
-  body.matrix.setTranslate(-0.5, -0.5, -0.5);
+  body.matrix.translate(0, -0.74, 0);
   body.matrix.scale(0.5, 0.5, 0.5);
+  body.textureNum = 0;
   body.render();
+
+
+  var floor = new Cube();
+  floor.matrix.translate(0,-0.75,0,0);
+  floor.color = [1, 0, 0, 1.0];
+  floor.matrix.scale(10, 0, 10);
+  floor.matrix.translate(-0.5, 0, -0.5);
+  floor.textureNum = 1;
+  floor.render();
+
+  var sky = new Cube();
+  sky.color = [1, 0, 0, 1.0];
+  sky.textureNum = 2;
+  sky.matrix.scale(50,50,50);
+  sky.matrix.translate(-0.5, -0.5, -0.5);
+  sky.render();
 
 
   // calculating the performance in the very end;
@@ -245,7 +328,24 @@ function connectVariablesToGLSL() {
 
   u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0");
   if (!u_Sampler0) {
-    console.log("Failed to get the u_sampler location");
+    console.log("Failed to get the u_sampler0 location");
+    return;
+  }
+
+  u_Sampler1 = gl.getUniformLocation(gl.program, "u_Sampler1");
+  if (!u_Sampler1) {
+    console.log("Failed to get the u_sampler1 location");
+    return;
+  }
+  u_Sampler2 = gl.getUniformLocation(gl.program, "u_Sampler2");
+  if (!u_Sampler2) {
+    console.log("Failed to get the u_sampler2 location");
+    return;
+  }
+
+  u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
+  if (!u_whichTexture) {
+    console.log("Failed to get the u_whichTexture value");
     return;
   }
 

@@ -5,14 +5,14 @@ class Cube {
     this.matrix = new Matrix4();
     this.vertices = null;
     this.color = null;
-    this.textureNum = 0;
+    this.textureNum = -7;
   }
 
   render() {
     var xy = this.position;
     var rgba = this.color;
     var size = this.size;
-
+    // console.log("Texture num is", this.textureNum);
     // pass the texture number
     gl.uniform1i(u_whichTexture, this.textureNum);
     // Pass the color of a point to u_FragColor variable
