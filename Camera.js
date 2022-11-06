@@ -24,7 +24,7 @@ class Camera {
     this.at = this.at.subtract(distance_vector);      // at = at - d
   }
 
-  left() {
+  right() {
     // function for moving left
     var distance_vector = this.at.subtract(this.eye);
     distance_vector = distance_vector.divide(distance_vector.length());
@@ -35,7 +35,7 @@ class Camera {
 
   }
 
-  right() {
+  left() {
     // function for moving right
     var distance_vector = this.at.subtract(this.eye);
     distance_vector = distance_vector.divide(distance_vector.length());
