@@ -78,7 +78,7 @@ let g_GlobalCameraInstance;
 // this is slowing down the program
 function AddActionsToHtmlUI() {
   // listener for camera angle
-  document.getElementById("camera_angle").addEventListener('mousemove', function() {g_globalAngle = this.value; renderScene();});
+  // document.getElementById("camera_angle").addEventListener('mousemove', function() {camera_angle_rotate(this.value);});
   document.getElementById("camera_angle2").addEventListener('mousemove', function() {g_globalAngleVertical = this.value; renderScene();});
   document.getElementById("wall_e_leg_vertical").addEventListener('mousemove', function() {leg_vertical_movement = this.value; scaleVerticalLegMovement();});
   document.getElementById("arm_vertical").addEventListener('mousemove', function() {arm_vertical_movement = this.value; scaleVerticalArmMovement();});
@@ -467,6 +467,7 @@ function main() {
   requestAnimationFrame(tick);
 }
 
+// this function is for moving in different directions
 function keydown(ev) {
   if (ev.keyCode == 97) {
     // A is pressed, move left
@@ -483,12 +484,43 @@ function keydown(ev) {
   } else if (ev.keyCode == 115) {
     // S is pressed, move down
     g_GlobalCameraInstance.back();
+  } else if (ev.keyCode == 113) {
+    g_GlobalCameraInstance.panLeft();
+  } else if (ev.keyCode == 101) {
+    g_GlobalCameraInstance.panRight();
   }
   console.log("Key pressed", ev.keyCode);
   renderScene();
-
 }
 
+// this function is for rotating the camera angle
+function camera_angle_rotate(angle) {
+  var direction = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  console.log("x = ", direction.x);
+  console.log("y = ", direction.y);
+  var r = Math.sqrt((direction.x**2) + (direction.y**2));
+  var tan_theta = direction.y / direction.x;
+  var theta = Math.atan(tan_theta); // this will be in radians
+  console.log(g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
+  // converting the angle in radians
+  var radian_angle = angle * (Math.PI/180);
+  var final_angle = theta + radian_angle;
+
+  var x_new = r * Math.cos(final_angle);
+  var y_new = r * Math.sin(final_angle);
+  console.log("x_new = ", x_new);
+  console.log("y_new = ", y_new);
+  // now resetting the vectors
+  direction.x = x_new;
+  direction.y = y_new;
+  console.log("direction = ", direction.x, direction.y, direction.z);
+  console.log(g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
+  var f = g_GlobalCameraInstance.eye.add(direction);
+  g_GlobalCameraInstance.at.x = f.x;
+  g_GlobalCameraInstance.at.y = f.y;
+  console.log(g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
+  renderScene();
+}
 var start_time = performance.now() / 1000.0;
 var seconds = performance.now() / 1000.0 - start_time;
 var ticker = 0;

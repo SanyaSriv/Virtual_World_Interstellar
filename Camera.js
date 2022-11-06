@@ -44,4 +44,35 @@ class Camera {
     this.eye = this.eye.add(right);
     this.at = this.at.add(right);
   }
+
+  panLeft() {
+    var distance_vector = this.at.subtract(this.eye);
+    var d_v = new Vector3([distance_vector.x, distance_vector.y, distance_vector.z]);
+    var alpha = 2;
+    var rotation_matrix = new Matrix4();
+    rotation_matrix.setRotate(alpha, this.up.x, this.up.y, this.up.z);
+    var f_prime = rotation_matrix.multiplyVector3(d_v);
+    var f_prime_vector = new Vector(f_prime.elements[0], f_prime.elements[1], f_prime.elements[2]);
+    this.at = this.eye.add(f_prime_vector);
+
+  }
+
+  panRight() {
+    var distance_vector = this.at.subtract(this.eye);
+    var d_v = new Vector3([distance_vector.x, distance_vector.y, distance_vector.z]);
+    var alpha = - 2;
+    var rotation_matrix = new Matrix4();
+    rotation_matrix.setRotate(alpha, this.up.x, this.up.y, this.up.z);
+    var f_prime = rotation_matrix.multiplyVector3(d_v);
+    var f_prime_vector = new Vector(f_prime.elements[0], f_prime.elements[1], f_prime.elements[2]);
+    this.at = this.eye.add(f_prime_vector);
+  }
+// In your camera class, create a function called "panLeft":
+// Compute the forward vector  f = at - eye;
+// Rotate the vector f by alpha (decide a value) degrees around the up vector.
+// Create a rotation matrix: rotationMatrix.setRotate(alpha, up.x, up.y, up.z).
+// Multiply this matrix by f to compute f_prime = rotationMatrix.multiplyVector3(f);
+// Update the "at"vector to be at = eye + f_prime;
+// In your camera class, create a function called "panRight":
+// Same idea as panLeft, but rotate u by -alpha degrees around the up vector.
 }
