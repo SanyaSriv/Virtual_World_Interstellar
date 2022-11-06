@@ -73,6 +73,7 @@ let hello_animation_state = 0;
 let animation_leg_rotation = 0;
 let number_of_minecraft_cubes = 0;
 let mine_craft_cube_x_y_coord = [];
+let g_GlobalCameraInstance;
 // // this will listen to all sliders
 // this is slowing down the program
 function AddActionsToHtmlUI() {
@@ -199,7 +200,10 @@ function renderScene() {
 
   // setting up the view matrix
   var viewMat = new Matrix4();
-  viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2], g_at[0],g_at[1],g_at[2], g_up[0],g_up[1],g_up[2]); // eye, at, up
+  // viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2], g_at[0],g_at[1],g_at[2], g_up[0],g_up[1],g_up[2]); // eye, at, up
+  viewMat.setLookAt(g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y, g_GlobalCameraInstance.eye.z,
+                    g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z,
+                    g_GlobalCameraInstance.up.x, g_GlobalCameraInstance.up.y, g_GlobalCameraInstance.up.z); // eye, at, up
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
   // setting up the scaling
@@ -406,6 +410,9 @@ function main() {
   connectVariablesToGLSL();
   // Initialize shaders
   AddActionsToHtmlUI();
+
+  // initializing the camera
+  g_GlobalCameraInstance = new Camera();
   // canvas.onmousedown = function(ev) {
   //   mouse_down = 1;
   //   mouse_up = 0;
@@ -464,14 +471,18 @@ function keydown(ev) {
   if (ev.keyCode == 97) {
     // A is pressed, move left
     console.log("Moving left");
-    g_eye[0] -= 0.2;
+    g_GlobalCameraInstance.left();
+    // g_eye[0] -= 0.2;
   } else if (ev.keyCode == 100) {
     // D is pressed, move right
-    g_eye[0] += 0.2;
+    g_GlobalCameraInstance.right();
+    // g_eye[0] += 0.2;
   } else if (ev.keyCode == 119) {
-    // W is pressed, move up
+    // W is pressed, move forward
+    g_GlobalCameraInstance.forward();
   } else if (ev.keyCode == 115) {
     // S is pressed, move down
+    g_GlobalCameraInstance.back();
   }
   console.log("Key pressed", ev.keyCode);
   renderScene();
