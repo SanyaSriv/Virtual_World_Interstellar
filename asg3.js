@@ -71,6 +71,8 @@ let u_whichTexture;
 // global animation variables
 let hello_animation_state = 0;
 let animation_leg_rotation = 0;
+let number_of_minecraft_cubes = 0;
+let mine_craft_cube_x_y_coord = [];
 // // this will listen to all sliders
 // this is slowing down the program
 function AddActionsToHtmlUI() {
@@ -117,7 +119,7 @@ function initTextures(gl, n) {
   image3.onload = function() {loadTexture(image3, 2, u_Sampler2);};
 
   image1.src = "wall_e_taking_care.jpeg";
-  image2.src = "1024px-SkyboxS1_right.png";
+  image2.src = "final_floor.png";
   image3.src = "bh.jpeg";
 
   return true;
@@ -173,8 +175,8 @@ function scaleVerticalArmMovement() {
   renderScene();
 }
 
-var g_eye = [0,0,7]
-var g_at = [0,0,-100]
+var g_eye = [0,1,12]
+var g_at = [0,20,-90]
 var g_up = [0,1,0]
 
 function renderScene() {
@@ -217,11 +219,10 @@ function renderScene() {
   body.textureNum = 0;
   body.render();
 
-
   var floor = new Cube();
-  floor.matrix.translate(0,-0.75,0,0);
+  floor.matrix.translate(0,-0.75,0);
   floor.color = [1, 0, 0, 1.0];
-  floor.matrix.scale(10, 0, 10);
+  floor.matrix.scale(32, 0, 32);
   floor.matrix.translate(-0.5, 0, -0.5);
   floor.textureNum = 1;
   floor.render();
@@ -231,8 +232,27 @@ function renderScene() {
   sky.textureNum = 2;
   sky.matrix.scale(50,50,50);
   sky.matrix.translate(-0.5, -0.5, -0.5);
+  var sky_reference_matrix = new Matrix4(sky.matrix);
   sky.render();
 
+  // draw the mine craft cubes
+  var index = mine_craft_cube_x_y_coord.length - 1
+  for(var i = 0; i < number_of_minecraft_cubes; i++) {
+    var block = new Cube();
+    block.matrix.translate(0,-0.75,0);
+    block.color = [1, 0, 0, 1.0];
+    // block.matrix = floor_reference_matrix;
+    block.textureNum = -1;
+    y = mine_craft_cube_x_y_coord[index];
+    index -= 1;
+    x = mine_craft_cube_x_y_coord[index];
+    index -= 1;
+    block.matrix.translate(-0.5, 0, -0.5);
+    block.matrix.translate(x, 0, y);
+    // block.matrix.scale(1/10, 5, 1/10);
+    // console.log("value in here is: ", x, y)
+    block.render();
+  }
 
   // calculating the performance in the very end;
   var duration = performance.now() - start_time;
@@ -359,11 +379,17 @@ function connectVariablesToGLSL() {
 function click(ev) {
   var x = ev.clientX; // x coordinate of a mouse pointer
   var y = ev.clientY; // y coordinate of a mouse pointer
-  var z = ev.clientZ;
+  var z = ev.clientZ; // z coordinate of the mouse pointer
+
   var rect = ev.target.getBoundingClientRect();
 
   x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
   y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
+  console.log("value of x and y is: ", x, y);
+  number_of_minecraft_cubes += 1;
+  mine_craft_cube_x_y_coord.push(x);
+  mine_craft_cube_x_y_coord.push(y);
+  console.log(number_of_minecraft_cubes);
   // console.log(x, y);
 }
 
@@ -380,45 +406,48 @@ function main() {
   connectVariablesToGLSL();
   // Initialize shaders
   AddActionsToHtmlUI();
-  canvas.onmousedown = function(ev) {
-    mouse_down = 1;
-    mouse_up = 0;
-    initial_x = ev.clientX;
-    initial_y = ev.clientY;
-  };
+  // canvas.onmousedown = function(ev) {
+  //   mouse_down = 1;
+  //   mouse_up = 0;
+  //   initial_x = ev.clientX;
+  //   initial_y = ev.clientY;
+  // };
   // canvas.onmouseup = function(ev) {
-  canvas.onmousemove = function(ev){
-  if (ev.buttons == 1) {
-    mouse_up = 1;
-    mouse_down = 0;
-    final_x = ev.clientX;
-    final_y = ev.clientY;
+  // canvas.onmousemove = function(ev){
+  // if (ev.buttons == 1) {
+  //   mouse_up = 1;
+  //   mouse_down = 0;
+  //   final_x = ev.clientX;
+  //   final_y = ev.clientY;
+  //
+  //   if ((final_x != initial_x) && (final_y != initial_y)) {
+  //     drag = 1;
+  //   } else {
+  //     drag = 0;
+  //   }
+  //
+  //   // if the user dragged on canvas, then we rotate
+  //   if (drag == 1) {
+  //     // rotate along the x axis
+  //     if (final_x - initial_x > 3) {
+  //       // then it means the user went from right to left
+  //       mouse_rotate_x = - (final_x - initial_x);
+  //     } else {
+  //       mouse_rotate_x = initial_x - final_x;
+  //     }
+  //
+  //     // now we will rotate along the y axis
+  //     if (final_y - initial_y > 3) {
+  //       mouse_rotate_y = - (final_y - initial_y);
+  //     } else {
+  //       mouse_rotate_y = initial_y - final_y;
+  //     }
+  //   }
+  // }
+  // }
+  canvas.onmousedown = function(ev){ click(ev) };
 
-    if ((final_x != initial_x) && (final_y != initial_y)) {
-      drag = 1;
-    } else {
-      drag = 0;
-    }
-
-    // if the user dragged on canvas, then we rotate
-    if (drag == 1) {
-      // rotate along the x axis
-      if (final_x - initial_x > 0) {
-        // then it means the user went from right to left
-        mouse_rotate_x = - (final_x - initial_x);
-      } else {
-        mouse_rotate_x = initial_x - final_x;
-      }
-
-      // now we will rotate along the y axis
-      if (final_y - initial_y > 0) {
-        mouse_rotate_y = - (final_y - initial_y);
-      } else {
-        mouse_rotate_y = initial_y - final_y;
-      }
-    }
-  }
-  }
+  document.onkeypress = function(ev){keydown(ev);};
 
   initTextures();
   // canvas.onmousemove = function(ev){if (ev.buttons == 1) {click(ev)}};
@@ -429,6 +458,24 @@ function main() {
 
   // renderScene();
   requestAnimationFrame(tick);
+}
+
+function keydown(ev) {
+  if (ev.keyCode == 97) {
+    // A is pressed, move left
+    console.log("Moving left");
+    g_eye[0] -= 0.2;
+  } else if (ev.keyCode == 100) {
+    // D is pressed, move right
+    g_eye[0] += 0.2;
+  } else if (ev.keyCode == 119) {
+    // W is pressed, move up
+  } else if (ev.keyCode == 115) {
+    // S is pressed, move down
+  }
+  console.log("Key pressed", ev.keyCode);
+  renderScene();
+
 }
 
 var start_time = performance.now() / 1000.0;

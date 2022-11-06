@@ -6,6 +6,7 @@ class Cube {
     this.vertices = null;
     this.color = null;
     this.textureNum = -7;
+    this.factor = 1;
   }
 
   render() {
