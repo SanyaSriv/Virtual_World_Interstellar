@@ -5,4 +5,4 @@ for infile in sys.argv[1:]:
     im = Image.open(infile)
     print(f"Original size : {im.size}")
     sunset_resized = im.resize((256, 256))
-    sunset_resized.save('black_tile_reduced.jpeg')
+    sunset_resized.save('white_tile_reduced.jpeg')
