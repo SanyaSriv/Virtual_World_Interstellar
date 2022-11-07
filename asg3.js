@@ -19,7 +19,6 @@ var FSHADER_SOURCE =
   `precision mediump float;
   varying vec2 v_UV;
   uniform vec4 u_FragColor;
-  uniform float u_factor;
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform sampler2D u_Sampler2;
@@ -88,7 +87,7 @@ let g_GlobalCameraInstance;
 // this is slowing down the program
 function AddActionsToHtmlUI() {
   // listener for camera angle
-  // document.getElementById("camera_angle").addEventListener('mousemove', function() {camera_angle_rotate(this.value);});
+  document.getElementById("camera_angle").addEventListener('mousemove', function() {camera_angle_rotate(this.value);});
   document.getElementById("Add_block").addEventListener('mousedown', function() {add_block();});
   document.getElementById("Delete_block").addEventListener('mousedown', function() {delete_block();});
   document.getElementById("camera_angle2").addEventListener('mousemove', function() {g_globalAngleVertical = this.value; renderScene();});
@@ -361,7 +360,7 @@ function renderWallE() {
     // var globalRotate = new Matrix4().rotate(g_globalAngle + shift_animation_rotation + mouse_rotate_x, 0, 1, 0);
     var globalRotate = new Matrix4().rotate(180, 0, 1, 0);
     // globalRotate.rotate(-90, 0, 1, 0);
-
+    // var globalRotate = new Matrix4();
     // then rotate it vertically
     // globalRotate.rotate(g_globalAngleVertical + mouse_rotate_y, 1, 0, 0);
     globalRotate.rotate(combined_y_rotation, 1, 0, 0);
@@ -1082,12 +1081,6 @@ function connectVariablesToGLSL() {
     return;
   }
 
-  u_factor = gl.getUniformLocation(gl.program, "u_factor");
-  if (!u_factor) {
-    console.log("Failed to get the u_factor value");
-    return;
-  }
-
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, identityM.elements);
@@ -1147,15 +1140,16 @@ function main() {
 
   // initializing the camera
   g_GlobalCameraInstance = new Camera();
-  // canvas.onmousedown = function(ev) {
-  //   mouse_down = 1;
-  //   mouse_up = 0;
-  //   initial_x = ev.clientX;
-  //   initial_y = ev.clientY;
-  // };
+  canvas.onmousedown = function(ev) {
+    mouse_down = 1;
+    mouse_up = 0;
+    initial_x = ev.clientX;
+    initial_y = ev.clientY;
+    console.log("mouse down")
+  };
   // canvas.onmouseup = function(ev) {
-  // canvas.onmousemove = function(ev){
-  // if (ev.buttons == 1) {
+  //   console.log("mouse up: ", ev.buttons);
+  // // if (ev.buttons == 1) {
   //   mouse_up = 1;
   //   mouse_down = 0;
   //   final_x = ev.clientX;
@@ -1170,23 +1164,58 @@ function main() {
   //   // if the user dragged on canvas, then we rotate
   //   if (drag == 1) {
   //     // rotate along the x axis
-  //     if (final_x - initial_x > 3) {
-  //       // then it means the user went from right to left
-  //       mouse_rotate_x = - (final_x - initial_x);
+  //     console.log("values: ", final_x, initial_x);
+  //     if (final_x - initial_x > 0) {
+  //       // Pan right?
+  //       g_GlobalCameraInstance.panRight();
+  //       // mouse_rotate_x = - (final_x - initial_x);
   //     } else {
-  //       mouse_rotate_x = initial_x - final_x;
-  //     }
-  //
-  //     // now we will rotate along the y axis
-  //     if (final_y - initial_y > 3) {
-  //       mouse_rotate_y = - (final_y - initial_y);
-  //     } else {
-  //       mouse_rotate_y = initial_y - final_y;
+  //       // Pan Left
+  //       g_GlobalCameraInstance.panLeftMouse(initial_x, final_x);
+  //       // mouse_rotate_x = initial_x - final_x;
   //     }
   //   }
+  // // }
   // }
-  // }
+
+  canvas.onmousemove = function(ev){
+  if (ev.buttons == 1) {
+    mouse_up = 1;
+    mouse_down = 0;
+    final_x = ev.clientX;
+    final_y = ev.clientY;
+
+    if ((final_x != initial_x) && (final_y != initial_y)) {
+      drag = 1;
+    } else {
+      drag = 0;
+    }
+
+    // if the user dragged on canvas, then we rotate
+    if (drag == 1) {
+      // rotate along the x axis
+      if (final_x - initial_x > 0) {
+        g_GlobalCameraInstance.panMouseLeft(Math.abs(final_x - initial_x) * 0.4);
+        // then it means the user went from right to left
+        // mouse_rotate_x = - (final_x - initial_x);
+
+      } else {
+        g_GlobalCameraInstance.panMouseRight(Math.abs(initial_x - final_x) * 0.4);
+        // mouse_rotate_x = initial_x - final_x;
+      }
+      initial_x = final_x;
+      initial_y = final_y;
+    }
+  }
+  }
   // canvas.onmousedown = function(ev){ click(ev) };
+
+  // // now we will rotate along the y axis
+  // if (final_y - initial_y > 0) {
+  //   mouse_rotate_y = - (final_y - initial_y);
+  // } else {
+  //   mouse_rotate_y = initial_y - final_y;
+  // }
 
   document.onkeypress = function(ev){keydown(ev);};
 
@@ -1229,32 +1258,30 @@ function keydown(ev) {
 
 // this function is for rotating the camera angle
 function camera_angle_rotate(angle) {
-  var direction = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-  console.log("x = ", direction.x);
-  console.log("y = ", direction.y);
-  var r = Math.sqrt((direction.x**2) + (direction.y**2));
-  var tan_theta = direction.y / direction.x;
-  var theta = Math.atan(tan_theta); // this will be in radians
-  console.log(g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
-  // converting the angle in radians
-  var radian_angle = angle * (Math.PI/180);
-  var final_angle = theta + radian_angle;
+  if (angle != 0) {
+    var direction = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
 
-  var x_new = r * Math.cos(final_angle);
-  var y_new = r * Math.sin(final_angle);
-  console.log("x_new = ", x_new);
-  console.log("y_new = ", y_new);
-  // now resetting the vectors
-  direction.x = x_new;
-  direction.y = y_new;
-  console.log("direction = ", direction.x, direction.y, direction.z);
-  console.log(g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
-  var f = g_GlobalCameraInstance.eye.add(direction);
-  g_GlobalCameraInstance.at.x = f.x;
-  g_GlobalCameraInstance.at.y = f.y;
-  console.log(g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
-  renderScene();
+    var r = Math.sqrt((direction.x**2) + (direction.y**2));
+
+    // var tan_theta = direction.y / direction.x;
+    var tan_theta = direction.x / direction.y;
+    var theta = Math.atan(tan_theta); // this will be in radians
+    var radian_angle = angle * (Math.PI/180);
+    var final_angle = theta + radian_angle;
+
+    var x_new = r * Math.cos(final_angle);
+    var y_new = r * Math.sin(final_angle);
+
+    direction.x = x_new;
+    direction.y = y_new;
+
+    g_GlobalCameraInstance.at = g_GlobalCameraInstance.eye.add(direction);
+
+    renderScene();
+  }
 }
+
+
 var start_time = performance.now() / 1000.0;
 var seconds = performance.now() / 1000.0 - start_time;
 var ticker = 0;

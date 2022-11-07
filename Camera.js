@@ -8,6 +8,8 @@ class Camera {
     this.up = new Vector(0, 1, 0);
     this.player_position_x = 16;
     this.player_position_y = 24;
+    this.total_rotation = 0;
+    this.rotation_happened = false;
   }
 
   forward() {
@@ -68,7 +70,68 @@ class Camera {
     rotation_matrix.setRotate(alpha, this.up.x, this.up.y, this.up.z);
     var f_prime = rotation_matrix.multiplyVector3(d_v);
     var f_prime_vector = new Vector(f_prime.elements[0], f_prime.elements[1], f_prime.elements[2]);
+    var diff = this.at.subtract(this.eye.add(f_prime_vector));
+    var diff_normal = diff.divide(diff.length());
     this.at = this.eye.add(f_prime_vector);
+
+    var prev_rot_value = this.total_rotation;
+    this.total_rotation += 2;
+    var rotation_value = this.total_rotation % 360;
+    console.log("rotation = ", prev_rot_value, this.total_rotation, this.rotation_happened, rotation_value);
+    if ((rotation_value <= 45) && (rotation_value > 0)) {
+      console.log("enteres here", this.player_position_x, this.player_position_y);
+      if ((this.rotation_happened === false)) {
+        this.player_position_x -= 1;
+        this.player_position_y -= 1;
+        console.log("enteres h", this.player_position_x, this.player_position_y);
+        console.log("comes");
+        this.rotation_happened = true;
+      }
+    } else if ((rotation_value <= 90) && (rotation_value > 45)) {
+      if (!(45 < prev_rot_value <= 90)) {
+        this.player_position_x += 1;
+      }
+    } else if ((rotation_value <= 135) && (rotation_value > 90)) {
+      if (!(90 < prev_rot_value <= 135)) {
+        this.player_position_x += 1;
+      }
+    } else if ((rotation_value <= 180) && (rotation_value > 135)) {
+      if (!(135 < prev_rot_value <= 180)) {
+        this.player_position_y += 1;
+      }
+    } else if ((rotation_value <= 225) && (rotation_value > 180)) {
+      if (!(180 < prev_rot_value <= 225)) {
+        this.player_position_y += 1;
+      }
+    } else if ((rotation_value <= 270) && (rotation_value > 225)) {
+      if (!(225 < prev_rot_value <= 270)) {
+        this.player_position_y += 1;
+      }
+    } else if ((rotation_value <= 315) && (rotation_value > 270)) {
+      if (!(270 < prev_rot_value <= 315)) {
+        this.player_position_x -= 1;
+      }
+    } else if ((rotation_value <= 360) && (rotation_value > 315)) {
+      if (!(315 < prev_rot_value <= 360)) {
+        this.player_position_x -= 1;
+      }
+    }
+
+    // changing the player location
+    // var r = Math.sqrt(distance_vector.x**2 + distance_vector.y**2 + distance_vector.z**2);
+    // console.log(Math.cos(alpha * (Math.PI / 180)));
+    // console.log(Math.sin(alpha * (Math.PI / 180)));
+    // console.log("Value previously: ", this.player_position_x, this.player_position_y);
+    //
+    //
+    // var x_component = r * Math.cos(alpha * (Math.PI / 180));
+    // var y_component = r * Math.sin(alpha * (Math.PI / 180));
+    // //
+    // // console.log("Value after: ", this.player_position_x, this.player_position_y);
+    //
+    // var normalized = this.at.divide(this.at.x**2 + this.at.y**2 + this.at.z**2);
+    // this.player_position_x += Math.ceil(normalized.x);
+    // this.player_position_y += Math.ceil(normalized.z);
 
   }
 
@@ -76,12 +139,39 @@ class Camera {
     var distance_vector = this.at.subtract(this.eye);
     var d_v = new Vector3([distance_vector.x, distance_vector.y, distance_vector.z]);
     var alpha = - 2;
+    this.total_rotation -= 2;
     var rotation_matrix = new Matrix4();
     rotation_matrix.setRotate(alpha, this.up.x, this.up.y, this.up.z);
     var f_prime = rotation_matrix.multiplyVector3(d_v);
     var f_prime_vector = new Vector(f_prime.elements[0], f_prime.elements[1], f_prime.elements[2]);
     this.at = this.eye.add(f_prime_vector);
   }
+
+  panMouseLeft(difference) {
+    var distance_vector = this.at.subtract(this.eye);
+    var d_v = new Vector3([distance_vector.x, distance_vector.y, distance_vector.z]);
+    var alpha = difference;
+    var rotation_matrix = new Matrix4();
+    rotation_matrix.setRotate(alpha, this.up.x, this.up.y, this.up.z);
+    var f_prime = rotation_matrix.multiplyVector3(d_v);
+    var f_prime_vector = new Vector(f_prime.elements[0], f_prime.elements[1], f_prime.elements[2]);
+    var diff = this.at.subtract(this.eye.add(f_prime_vector));
+    var diff_normal = diff.divide(diff.length());
+    this.at = this.eye.add(f_prime_vector);
+  }
+
+  panMouseRight(difference) {
+    var distance_vector = this.at.subtract(this.eye);
+    var d_v = new Vector3([distance_vector.x, distance_vector.y, distance_vector.z]);
+    var alpha = - difference;
+    this.total_rotation -= 2;
+    var rotation_matrix = new Matrix4();
+    rotation_matrix.setRotate(alpha, this.up.x, this.up.y, this.up.z);
+    var f_prime = rotation_matrix.multiplyVector3(d_v);
+    var f_prime_vector = new Vector(f_prime.elements[0], f_prime.elements[1], f_prime.elements[2]);
+    this.at = this.eye.add(f_prime_vector);
+  }
+
 // In your camera class, create a function called "panLeft":
 // Compute the forward vector  f = at - eye;
 // Rotate the vector f by alpha (decide a value) degrees around the up vector.
