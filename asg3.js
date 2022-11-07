@@ -19,6 +19,7 @@ var FSHADER_SOURCE =
   `precision mediump float;
   varying vec2 v_UV;
   uniform vec4 u_FragColor;
+  uniform float u_factor;
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform sampler2D u_Sampler2;
@@ -40,7 +41,8 @@ var FSHADER_SOURCE =
       gl_FragColor = texture2D(u_Sampler3, v_UV);
     } else if (u_whichTexture == 4) {
       gl_FragColor = texture2D(u_Sampler4, v_UV);
-    } else {
+    }
+    else {
       gl_FragColor = vec4(1, 0.2, 0.2, 1);
     }
   }`;
@@ -74,6 +76,7 @@ let mouse_rotate_y = 0;
 let mouse_rotate_z = 0;
 let u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4;
 let u_whichTexture;
+let u_factor;
 // global animation variables
 let hello_animation_state = 0;
 let animation_leg_rotation = 0;
@@ -231,9 +234,9 @@ g_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,2,3,4,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -255,24 +258,6 @@ var g_at = [0,20,-90]
 var g_up = [0,1,0]
 
 function renderMap() {
-  // for (var i = 0; i < 32; i++) {
-  //   for (var j = 0; j < 32; j ++) {
-  //     if (((j == 0) && (i <= 7)) || ((j == 31) && (i <= 7)) ||
-  //     ((i == 0) && (j <= 7)) || ((i == 31) && (j <= 7)) ||
-  //     ((i == 0) && (j >= 25)) || ((i == 31) && (j >= 25)) ||
-  //     ((j == 31) && (i >= 25))|| ((j == 0) && (i >= 25))) {
-  //       // draw the cube/wall
-  //       var wall = new Cube();
-  //       wall.color = [1, 0,0,1.0];
-  //       wall.textureNum = 3;
-  //       wall.matrix.translate(0, -0.75, 0);
-  //       wall.matrix.scale(1.2, 1.2, 1.2);
-  //       wall.matrix.translate(i-16, 0, j-16);
-  //       wall.renderFast();
-  //     }
-  //   }
-  // }
-
   var g_map_length = g_map.length;
   console.log("map length = ", g_map_length);
   for (var i = 0; i < g_map_length; i++) {
@@ -341,7 +326,7 @@ function renderScene() {
   body.matrix.translate(0, -0.74, 0);
   body.matrix.scale(0.5, 0.5, 0.5);
   body.textureNum = 0;
-  body.render();
+  body.renderFast();
 
   var floor = new Cube();
   floor.matrix.translate(0,-0.75,0);
@@ -350,7 +335,7 @@ function renderScene() {
   // floor.matrix.scale(10, 0, 10);
   floor.matrix.translate(-0.5, 0, -0.5);
   floor.textureNum = 1;
-  floor.render();
+  floor.renderFast();
 
   var sky = new Cube();
   sky.color = [1, 0, 0, 1.0];
@@ -358,7 +343,7 @@ function renderScene() {
   sky.matrix.scale(50,50,50);
   sky.matrix.translate(-0.5, -0.5, -0.5);
   var sky_reference_matrix = new Matrix4(sky.matrix);
-  sky.render();
+  sky.renderFast();
 
   // draw the mine craft cubes
   var index = mine_craft_cube_x_y_coord.length - 1
@@ -380,7 +365,7 @@ function renderScene() {
     block.matrix.translate(0, -0.75, 0);
     block.matrix.scale(0.5, 0.5, 0.5);
     block.matrix.translate(x, 0, -z);
-    block.render();
+    block.renderFast();
     // block.matrix.scale(1/10, 5, 1/10);
     // console.log("value in here is: ", x, y)
   }
@@ -511,6 +496,12 @@ function connectVariablesToGLSL() {
   u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
   if (!u_whichTexture) {
     console.log("Failed to get the u_whichTexture value");
+    return;
+  }
+
+  u_factor = gl.getUniformLocation(gl.program, "u_factor");
+  if (!u_factor) {
+    console.log("Failed to get the u_factor value");
     return;
   }
 

@@ -7,6 +7,7 @@ class Cube {
     this.color = null;
     this.textureNum = -7;
     this.factor = 1;
+    this.color_ratio = 0;
   }
 
   render() {
@@ -21,6 +22,7 @@ class Cube {
 
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
+    gl.uniform1i(u_factor, this.color_ratio);
     // if (this.vertices === null) {
     //   this.generateVertices();
     // }
@@ -70,10 +72,11 @@ class Cube {
   }
 
   renderFast() {
-    var xy = this.position;
+    // var xy = this.position;
     var rgba = this.color;
-    var size = this.size;
+    // var size = this.size;
     gl.uniform1i(u_whichTexture, this.textureNum);
+    gl.uniform1f(u_factor, this.color_ratio);
     // Pass the color of a point to u_FragColor variable
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
 
