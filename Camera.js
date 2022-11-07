@@ -3,8 +3,8 @@ class Camera {
   constructor() {
     // define everything here
     // these will start with some default values
-    this.eye = new Vector(0, 1, 12);
-    this.at = new Vector(0, 20, -90);
+    this.eye = new Vector(0, 1, 14);
+    this.at = new Vector(0, 19, -90);
     this.up = new Vector(0, 1, 0);
   }
 
@@ -14,6 +14,7 @@ class Camera {
     distance_vector = distance_vector.divide(distance_vector.length());
     this.eye = this.eye.add(distance_vector);     // eye = eye + d
     this.at = this.at.add(distance_vector);       // at = at + d
+    console.log("lp",this.eye.x, this.eye.y, this.eye.z);
   }
 
   back() {

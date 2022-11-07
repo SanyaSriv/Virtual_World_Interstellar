@@ -22,6 +22,7 @@ var FSHADER_SOURCE =
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform sampler2D u_Sampler2;
+  uniform sampler2D u_Sampler3;
   uniform int u_whichTexture;
   void main() {
     if (u_whichTexture == -2) {
@@ -34,7 +35,10 @@ var FSHADER_SOURCE =
       gl_FragColor = texture2D(u_Sampler1, v_UV);
     } else if (u_whichTexture == 2) {
       gl_FragColor = texture2D(u_Sampler2, v_UV);
-    } else {
+    } else if (u_whichTexture == 3) {
+      gl_FragColor = texture2D(u_Sampler3, v_UV);
+    }
+    else {
       gl_FragColor = vec4(1, 0.2, 0.2, 1);
     }
   }`;
@@ -66,7 +70,7 @@ let special_shift_animation = 0;
 let mouse_rotate_x = 0;
 let mouse_rotate_y = 0;
 let mouse_rotate_z = 0;
-let u_Sampler0, u_Sampler1, u_Sampler2;
+let u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3;
 let u_whichTexture;
 // global animation variables
 let hello_animation_state = 0;
@@ -101,6 +105,7 @@ function initTextures(gl, n) {
   var image1 = new Image();
   var image2 = new Image();
   var image3 = new Image();
+  var image4 = new Image();
 
   if (!image1) {
     console.log("Failed to get the image1 object");
@@ -114,14 +119,20 @@ function initTextures(gl, n) {
     console.log("Failed to get the image3 object");
     return false;
   }
+  if (!image4) {
+    console.log("Failed to get the image4 object");
+    return false;
+  }
 
   image1.onload = function() {loadTexture(image1, 0, u_Sampler0);};
   image2.onload = function() {loadTexture(image2, 1, u_Sampler1);};
   image3.onload = function() {loadTexture(image3, 2, u_Sampler2);};
+  image4.onload = function() {loadTexture(image4, 3, u_Sampler3);};
 
   image1.src = "wall_e_taking_care.jpeg";
   image2.src = "final_floor.png";
   image3.src = "bh.jpeg";
+  image4.src = "black_tile_reduced.jpeg"
 
   return true;
 }
@@ -159,6 +170,15 @@ function loadTexture(image, number, u_Sampler) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 2);
+  } else if (number == 3) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE3);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler, 3);
   }
   console.log("Loaded Texture", image);
 }
@@ -176,24 +196,58 @@ function scaleVerticalArmMovement() {
   renderScene();
 }
 
+g_map = [
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+]
 var g_eye = [0,1,12]
 var g_at = [0,20,-90]
 var g_up = [0,1,0]
 
 function renderMap() {
-  for (var i = 0; i < 64; i++) {
-    for (var j = 0; j < 64; j ++) {
-      if (((j == 0) && (i <= 15)) || ((j == 63) && (i <= 15)) ||
-      ((i == 0) && (j <= 15)) || ((i == 63) && (j <= 15)) ||
-      ((i == 0) && (j >= 49)) || ((i == 63) && (j >= 49)) ||
-      ((j == 63) && (i >= 49))|| ((j == 0) && (i >= 49))) {
+  for (var i = 0; i < 32; i++) {
+    for (var j = 0; j < 32; j ++) {
+      if (((j == 0) && (i <= 7)) || ((j == 31) && (i <= 7)) ||
+      ((i == 0) && (j <= 7)) || ((i == 31) && (j <= 7)) ||
+      ((i == 0) && (j >= 25)) || ((i == 31) && (j >= 25)) ||
+      ((j == 31) && (i >= 25))|| ((j == 0) && (i >= 25))) {
         // draw the cube/wall
         var wall = new Cube();
         wall.color = [1, 0,0,1.0];
-        wall.textureNum = -1;
+        wall.textureNum = 3;
         wall.matrix.translate(0, -0.75, 0);
-        wall.matrix.scale(0.3, 0.3, 0.3);
-        wall.matrix.translate(i-32, 0, j-32);
+        wall.matrix.scale(1.2, 1.2, 1.2);
+        wall.matrix.translate(i-16, 0, j-16);
         wall.renderFast();
       }
     }
@@ -245,7 +299,7 @@ function renderScene() {
   var floor = new Cube();
   floor.matrix.translate(0,-0.75,0);
   floor.color = [1, 0, 0, 1.0];
-  floor.matrix.scale(20, 0, 20);
+  floor.matrix.scale(40, 0, 40);
   // floor.matrix.scale(10, 0, 10);
   floor.matrix.translate(-0.5, 0, -0.5);
   floor.textureNum = 1;
@@ -261,21 +315,27 @@ function renderScene() {
 
   // draw the mine craft cubes
   var index = mine_craft_cube_x_y_coord.length - 1
+  console.log("index is: ", index);
   for(var i = 0; i < number_of_minecraft_cubes; i++) {
     var block = new Cube();
-    block.matrix.translate(0,-0.75,0);
-    block.color = [1, 0, 0, 1.0];
-    // block.matrix = floor_reference_matrix;
-    block.textureNum = -1;
+    z = mine_craft_cube_x_y_coord[index];
+    index -= 1;
     y = mine_craft_cube_x_y_coord[index];
     index -= 1;
     x = mine_craft_cube_x_y_coord[index];
     index -= 1;
-    block.matrix.translate(-0.5, 0, -0.5);
-    block.matrix.translate(x, 0, y);
+    console.log("what we got", x, y);
+    // place a block right in front of you
+    // x = g_GlobalCameraInstance.eye.x
+    // y = g_GlobalCameraInstance.eye.y
+    block.color = [1, 0, 0, 1.0];
+    block.textureNum = -1;
+    block.matrix.translate(0, -0.75, 0);
+    block.matrix.scale(0.5, 0.5, 0.5);
+    block.matrix.translate(x, 0, -z);
+    block.render();
     // block.matrix.scale(1/10, 5, 1/10);
     // console.log("value in here is: ", x, y)
-    block.render();
   }
 
   renderMap();
@@ -389,6 +449,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_Sampler3 = gl.getUniformLocation(gl.program, "u_Sampler3");
+  if (!u_Sampler3) {
+    console.log("Failed to get the u_Sampler3 location");
+    return;
+  }
+
   u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
   if (!u_whichTexture) {
     console.log("Failed to get the u_whichTexture value");
@@ -413,9 +479,23 @@ function click(ev) {
   y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
   console.log("value of x and y is: ", x, y);
   number_of_minecraft_cubes += 1;
-  mine_craft_cube_x_y_coord.push(x);
-  mine_craft_cube_x_y_coord.push(y);
-  console.log(number_of_minecraft_cubes);
+
+  // we can place it in between the d vector
+  var distance_vector = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  // now we can place it at 1/3rd of the distance
+  // var normalized_eye = g_GlobalCameraInstance.eye.divide(g_GlobalCameraInstance.eye.length);
+  // console.log("normals: ", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y);
+  // console.log("after: ", normalized_eye.x, normalized_eye.y);
+  // // mine_craft_cube_x_y_coord.push(normalized_eye.x);
+  // // mine_craft_cube_x_y_coord.push(normalized_eye.y);
+  mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.x);
+  mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.y);
+  mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.z);
+
+  // mine_craft_cube_x_y_coord.push(distance_vector.x/3);
+  // mine_craft_cube_x_y_coord.push(distance_vector.y/3);
+
+  console.log("what we added", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y);
   // console.log(x, y);
 }
 
