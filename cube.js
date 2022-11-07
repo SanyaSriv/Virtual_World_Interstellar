@@ -5,7 +5,7 @@ class Cube {
     this.matrix = new Matrix4();
     this.vertices = null;
     this.color = null;
-    this.textureNum = -7;
+    this.textureNum = -2;
     this.factor = 1;
     this.color_ratio = 0;
   }
