@@ -89,6 +89,8 @@ let g_GlobalCameraInstance;
 function AddActionsToHtmlUI() {
   // listener for camera angle
   // document.getElementById("camera_angle").addEventListener('mousemove', function() {camera_angle_rotate(this.value);});
+  document.getElementById("Add_block").addEventListener('mousedown', function() {add_block();});
+  document.getElementById("Delete_block").addEventListener('mousedown', function() {delete_block();});
   document.getElementById("camera_angle2").addEventListener('mousemove', function() {g_globalAngleVertical = this.value; renderScene();});
   document.getElementById("wall_e_leg_vertical").addEventListener('mousemove', function() {leg_vertical_movement = this.value; scaleVerticalLegMovement();});
   document.getElementById("arm_vertical").addEventListener('mousemove', function() {arm_vertical_movement = this.value; scaleVerticalArmMovement();});
@@ -216,6 +218,18 @@ function scaleVerticalLegMovement() {
 //
 function scaleVerticalArmMovement() {
   renderScene();
+}
+
+function add_block() {
+  console.log("add: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
+  g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
+}
+
+function delete_block() {
+  console.log("delete: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
+  if (g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] > 0) {
+    g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] -= 1;
+  }
 }
 
 g_map = [
@@ -1172,7 +1186,7 @@ function main() {
   //   }
   // }
   // }
-  canvas.onmousedown = function(ev){ click(ev) };
+  // canvas.onmousedown = function(ev){ click(ev) };
 
   document.onkeypress = function(ev){keydown(ev);};
 
