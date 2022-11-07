@@ -4,7 +4,7 @@ class Camera {
     // define everything here
     // these will start with some default values
     this.eye = new Vector(0, 1, 14);
-    this.at = new Vector(0, 19, -90);
+    this.at = new Vector(0, 0, -90);
     this.up = new Vector(0, 1, 0);
   }
 
