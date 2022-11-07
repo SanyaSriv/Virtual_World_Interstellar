@@ -236,7 +236,7 @@ g_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,2,3,4,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,2,3,4,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // <- player begins's here
   [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -918,7 +918,6 @@ function renderScene() {
 
   // draw the mine craft cubes
   var index = mine_craft_cube_x_y_coord.length - 1
-  // console.log("index is: ", index);
   for(var i = 0; i < number_of_minecraft_cubes; i++) {
     var block = new Cube();
     z = mine_craft_cube_x_y_coord[index];
@@ -927,18 +926,13 @@ function renderScene() {
     index -= 1;
     x = mine_craft_cube_x_y_coord[index];
     index -= 1;
-    // console.log("what we got", x, y);
-    // place a block right in front of you
-    // x = g_GlobalCameraInstance.eye.x
-    // y = g_GlobalCameraInstance.eye.y
+
     block.color = [1, 0, 0, 1.0];
     block.textureNum = -1;
     block.matrix.translate(0, -0.75, 0);
     block.matrix.scale(1.2, 1.2, 1.2);
     block.matrix.translate(x, 0, - z - 7);
     block.renderFast();
-    // block.matrix.scale(1/10, 5, 1/10);
-    // console.log("value in here is: ", x, y)
   }
 
   renderMap();
@@ -1101,22 +1095,25 @@ function click(ev) {
   number_of_minecraft_cubes += 1;
 
   // we can place it in between the d vector
-  var distance_vector = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-  // now we can place it at 1/3rd of the distance
-  // var normalized_eye = g_GlobalCameraInstance.eye.divide(g_GlobalCameraInstance.eye.length);
-  // console.log("normals: ", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y);
-  // console.log("after: ", normalized_eye.x, normalized_eye.y);
-  // // mine_craft_cube_x_y_coord.push(normalized_eye.x);
-  // // mine_craft_cube_x_y_coord.push(normalized_eye.y);
-  mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.x + 0.5);
-  mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.y);
-  mine_craft_cube_x_y_coord.push(- g_GlobalCameraInstance.eye.z);
-
-  // mine_craft_cube_x_y_coord.push(distance_vector.x/3);
-  // mine_craft_cube_x_y_coord.push(distance_vector.y/3);
-
-  console.log("what we added", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y, g_GlobalCameraInstance.eye.z);
-  console.log("what we added- 2", distance_vector.x, distance_vector.y, distance_vector.z);
+  // var distance_vector = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  // // now we can place it at 1/3rd of the distance
+  // var normalized_eye = distance_vector.divide(distance_vector.length);
+  // // console.log("normals: ", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y);
+  // // console.log("after: ", normalized_eye.x, normalized_eye.y);
+  // // // mine_craft_cube_x_y_coord.push(normalized_eye.x);
+  // // // mine_craft_cube_x_y_coord.push(normalized_eye.y);
+  // mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.x + 0.5);
+  // mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.y);
+  // mine_craft_cube_x_y_coord.push(- g_GlobalCameraInstance.eye.z);
+  //
+  // // mine_craft_cube_x_y_coord.push(distance_vector.x/3);
+  // // mine_craft_cube_x_y_coord.push(distance_vector.y/3);
+  // var x = Math.floor(g_GlobalCameraInstance.eye.x + distance_vector.x);
+  // var y = Math.floor(g_GlobalCameraInstance.eye.z + distance_vector.z);
+  g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
+  console.log("Player's position = ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
+  // console.log("what we added", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y, g_GlobalCameraInstance.eye.z);
+  // console.log("what we added- 2", distance_vector.x, distance_vector.y, distance_vector.z);
   // console.log(x, y);
 }
 

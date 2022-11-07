@@ -6,6 +6,8 @@ class Camera {
     this.eye = new Vector(0, 1, 14);
     this.at = new Vector(0, 0, -90);
     this.up = new Vector(0, 1, 0);
+    this.player_position_x = 16;
+    this.player_position_y = 24;
   }
 
   forward() {
@@ -15,6 +17,9 @@ class Camera {
     this.eye = this.eye.add(distance_vector);     // eye = eye + d
     this.at = this.at.add(distance_vector);       // at = at + d
     console.log("lp",this.eye.x, this.eye.y, this.eye.z);
+
+    // changing the player's position as well
+    this.player_position_y -= 1;
   }
 
   back() {
@@ -23,6 +28,9 @@ class Camera {
     distance_vector = distance_vector.divide(distance_vector.length());
     this.eye = this.eye.subtract(distance_vector);    // eye = eye - d
     this.at = this.at.subtract(distance_vector);      // at = at - d
+
+    // changing the player's position as well
+    this.player_position_y += 1;
   }
 
   right() {
@@ -34,6 +42,9 @@ class Camera {
     this.eye = this.eye.add(left);
     this.at = this.at.add(left);
 
+    // changing the player's position as well
+    this.player_position_x += 1;
+
   }
 
   left() {
@@ -44,6 +55,9 @@ class Camera {
     right = right.divide(right.length()) // normalizing it
     this.eye = this.eye.add(right);
     this.at = this.at.add(right);
+
+    // changing the player's position as well
+    this.player_position_x -= 1;
   }
 
   panLeft() {
