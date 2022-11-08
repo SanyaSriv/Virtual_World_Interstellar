@@ -25,6 +25,7 @@ var FSHADER_SOURCE =
   uniform sampler2D u_Sampler3;
   uniform sampler2D u_Sampler4;
   uniform sampler2D u_Sampler5;
+  uniform sampler2D u_Sampler6;
   uniform int u_whichTexture;
   void main() {
     if (u_whichTexture == -2) {
@@ -43,6 +44,8 @@ var FSHADER_SOURCE =
       gl_FragColor = texture2D(u_Sampler4, v_UV);
     } else if (u_whichTexture == 5) {
       gl_FragColor = texture2D(u_Sampler5, v_UV);
+    } else if (u_whichTexture == 6) {
+      gl_FragColor = texture2D(u_Sampler6, v_UV);
     }
     else {
       gl_FragColor = vec4(1, 0.2, 0.2, 1);
@@ -77,7 +80,7 @@ let special_shift_animation = 0;
 let mouse_rotate_x = 0;
 let mouse_rotate_y = 0;
 let mouse_rotate_z = 0;
-let u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4, u_Sampler5;
+let u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4, u_Sampler5, u_Sampler6;
 let u_whichTexture;
 let u_factor;
 // global animation variables
@@ -121,6 +124,7 @@ function initTextures(gl, n) {
   var image4 = new Image();
   var image5 = new Image();
   var image6 = new Image();
+  var image7 = new Image();
 
   if (!image1) {
     console.log("Failed to get the image1 object");
@@ -143,7 +147,10 @@ function initTextures(gl, n) {
     return false;
   }
   if (!image6) {
-    console.log("Failed to get the inage6 object");
+    console.log("Failed to get the image6 object");
+  }
+  if (!image7) {
+    console.log("Failed to get the image7 object");
   }
 
   image1.onload = function() {loadTexture(image1, 0, u_Sampler0);};
@@ -152,6 +159,7 @@ function initTextures(gl, n) {
   image4.onload = function() {loadTexture(image4, 3, u_Sampler3);};
   image5.onload = function() {loadTexture(image5, 4, u_Sampler4);};
   image6.onload = function() {loadTexture(image6, 5, u_Sampler5);};
+  image7.onload = function() {loadTexture(image7, 6, u_Sampler6);};
 
   image1.src = "gold_picture.jpeg";
   image2.src = "final_floor.png";
@@ -159,6 +167,7 @@ function initTextures(gl, n) {
   image4.src = "black_tile_reduced.jpeg"
   image5.src = "white_tile_reduced.jpeg"
   image6.src = "gold_picture.jpeg"
+  image7.src = "silver_picture.jpeg"
 
   return true;
 }
@@ -223,6 +232,15 @@ function loadTexture(image, number, u_Sampler) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 5);
+  } else if (number == 6) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE6);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler, 6);
   }
   console.log("Loaded Texture", image);
 }
@@ -282,9 +300,9 @@ g_map = [
   [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,2,3,4,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -296,9 +314,9 @@ g_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,1,3,4,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -320,6 +338,7 @@ g_color_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -333,8 +352,7 @@ g_color_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -380,6 +398,12 @@ function renderMap() {
           } else if (g_color_map[i][j] == 1) {
             wall.textureNum = -2;
             wall.color = [235/255, 52/255, 97/255, 1.0];
+          } else if (g_color_map[i][j] == 3) {
+            wall.textureNum = -2;
+            wall.color = [168/255, 114/255, 12/255, 1.0];
+          } else if (g_color_map[i][j] == 4) {
+            wall.textureNum = -2;
+            wall.color = [16/255, 151/255, 158/255, 1.0];
           }
 
           wall.matrix.translate(0, -0.75 + size_to_add, 0);
@@ -961,12 +985,26 @@ function renderScene() {
 
 
   // main body
-  var body = new Cube();
-  body.color = [1, 0, 0, 1.0];
-  body.matrix.translate(0, -0.74, 0);
-  body.matrix.scale(0.5, 0.5, 0.5);
-  body.textureNum = 5;
-  body.renderFast();
+  var gold_cube = new Cube();
+  gold_cube.color = [1, 0, 0, 1.0];
+  gold_cube.matrix.translate(0, -0.74, 0);
+  gold_cube.matrix.scale(0.5, 0.5, 0.5);
+  gold_cube.textureNum = 5;
+  gold_cube.renderFast();
+
+  var silver_cube = new Cube();
+  silver_cube.color = [1, 0, 0, 1.0];
+  silver_cube.matrix.translate(-7.0, -0.74, 0);
+  silver_cube.matrix.scale(0.5, 0.5, 0.5);
+  silver_cube.textureNum = 6;
+  silver_cube.renderFast();
+
+  var energy = new Cube();
+  energy.color = [203/255, 240/255, 19/255, 1.0];
+  energy.matrix.translate(10, -0.74, 0);
+  energy.matrix.scale(0.5, 0.5, 0.5);
+  energy.textureNum = -2;
+  energy.renderFast();
 
   var floor = new Cube();
   floor.matrix.translate(0,-0.75,0);
@@ -1139,6 +1177,18 @@ function connectVariablesToGLSL() {
   u_Sampler4 = gl.getUniformLocation(gl.program, "u_Sampler4");
   if (!u_Sampler4) {
     cosole.log("Failed to get the u_Sampler4 location");
+    return false;
+  }
+
+  u_Sampler5 = gl.getUniformLocation(gl.program, "u_Sampler5");
+  if (!u_Sampler5) {
+    cosole.log("Failed to get the u_Sampler5 location");
+    return false;
+  }
+
+  u_Sampler6 = gl.getUniformLocation(gl.program, "u_Sampler6");
+  if (!u_Sampler6) {
+    cosole.log("Failed to get the u_Sampler6 location");
     return false;
   }
 
