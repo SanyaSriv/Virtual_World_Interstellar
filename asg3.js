@@ -24,6 +24,7 @@ var FSHADER_SOURCE =
   uniform sampler2D u_Sampler2;
   uniform sampler2D u_Sampler3;
   uniform sampler2D u_Sampler4;
+  uniform sampler2D u_Sampler5;
   uniform int u_whichTexture;
   void main() {
     if (u_whichTexture == -2) {
@@ -40,6 +41,8 @@ var FSHADER_SOURCE =
       gl_FragColor = texture2D(u_Sampler3, v_UV);
     } else if (u_whichTexture == 4) {
       gl_FragColor = texture2D(u_Sampler4, v_UV);
+    } else if (u_whichTexture == 5) {
+      gl_FragColor = texture2D(u_Sampler5, v_UV);
     }
     else {
       gl_FragColor = vec4(1, 0.2, 0.2, 1);
@@ -74,7 +77,7 @@ let special_shift_animation = 0;
 let mouse_rotate_x = 0;
 let mouse_rotate_y = 0;
 let mouse_rotate_z = 0;
-let u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4;
+let u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4, u_Sampler5;
 let u_whichTexture;
 let u_factor;
 // global animation variables
@@ -117,6 +120,7 @@ function initTextures(gl, n) {
   var image3 = new Image();
   var image4 = new Image();
   var image5 = new Image();
+  var image6 = new Image();
 
   if (!image1) {
     console.log("Failed to get the image1 object");
@@ -138,18 +142,23 @@ function initTextures(gl, n) {
     console.log("Failed to get the image5 object");
     return false;
   }
+  if (!image6) {
+    console.log("Failed to get the inage6 object");
+  }
 
   image1.onload = function() {loadTexture(image1, 0, u_Sampler0);};
   image2.onload = function() {loadTexture(image2, 1, u_Sampler1);};
   image3.onload = function() {loadTexture(image3, 2, u_Sampler2);};
   image4.onload = function() {loadTexture(image4, 3, u_Sampler3);};
   image5.onload = function() {loadTexture(image5, 4, u_Sampler4);};
+  image6.onload = function() {loadTexture(image6, 5, u_Sampler5);};
 
-  image1.src = "wall_e_taking_care.jpeg";
+  image1.src = "gold_picture.jpeg";
   image2.src = "final_floor.png";
   image3.src = "bh.jpeg";
   image4.src = "black_tile_reduced.jpeg"
   image5.src = "white_tile_reduced.jpeg"
+  image6.src = "gold_picture.jpeg"
 
   return true;
 }
@@ -205,6 +214,15 @@ function loadTexture(image, number, u_Sampler) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 4);
+  } else if (number == 5) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE5);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler, 5);
   }
   console.log("Loaded Texture", image);
 }
@@ -947,7 +965,7 @@ function renderScene() {
   body.color = [1, 0, 0, 1.0];
   body.matrix.translate(0, -0.74, 0);
   body.matrix.scale(0.5, 0.5, 0.5);
-  body.textureNum = 0;
+  body.textureNum = 5;
   body.renderFast();
 
   var floor = new Cube();
@@ -991,6 +1009,9 @@ function renderScene() {
 
   // now going to render WallE
   renderWallE();
+
+
+  // going to draw the OBJ
 
   // calculating the performance in the very end;
   var duration = performance.now() - start_time;
