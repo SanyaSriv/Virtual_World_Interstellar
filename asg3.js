@@ -200,8 +200,6 @@ function loadTexture(image, number, u_Sampler) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE2);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 2);
@@ -209,8 +207,6 @@ function loadTexture(image, number, u_Sampler) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE3);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 3);
@@ -218,8 +214,6 @@ function loadTexture(image, number, u_Sampler) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE4);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 4);
@@ -227,8 +221,6 @@ function loadTexture(image, number, u_Sampler) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE5);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 5);
@@ -236,8 +228,6 @@ function loadTexture(image, number, u_Sampler) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE6);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.uniform1i(u_Sampler, 6);
@@ -265,8 +255,6 @@ function add_block() {
 
   g_GlobalCameraInstance.player_position_x = Math.round(new_position.x) + 16;
   g_GlobalCameraInstance.player_position_y = Math.round(new_position.z) + 11;
-
-  console.log("x and y = ", new_position.x, new_position.z);
 
   console.log("add: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
   g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
@@ -362,18 +350,6 @@ g_color_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ]
 
-// function terrain_developer(){
-//   var g_map_length = g_terrain_map.length;
-//   for (var i = 0; i < g_map_length; i++) {
-//     for (var j = 0; j < g_map_length; j ++) {
-//       if (g_terrain_map > 0) {
-//         var first_point =
-//         var second_point =
-//         var third_point = []
-//       }
-//     }
-//   }
-// }
 var g_eye = [0,1,12]
 var g_at = [0,20,-90]
 var g_up = [0,1,0]
@@ -959,18 +935,11 @@ function renderScene() {
   // projMatrix.setPerspective(50, canvas.width/canvas.height, 0.1, 100);
   // gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMatrix.elements);
 
-  // var projMatrix = new Matrix4();
-  // console.log(g_GlobalCameraInstance.fov);
   g_GlobalCameraInstance.projMatrix.setPerspective(g_GlobalCameraInstance.fov, canvas.width/canvas.height, 0.1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, g_GlobalCameraInstance.projMatrix.elements);
 
   // setting up the view matrix
   var viewMat = new Matrix4();
-  // viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2], g_at[0],g_at[1],g_at[2], g_up[0],g_up[1],g_up[2]); // eye, at, up
-  // console.log(g_GlobalCameraInstance.eye.x + Math.cos(globalFOV * Math.PI/180) * 5, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z + Math.sin(globalFOV * Math.PI/180) * 5);
-  // var diff = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-  // console.log(diff.length(), "sgf");
-  // console.log("at = ", g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
   viewMat.setLookAt(g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z,
                     g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z,
                     g_GlobalCameraInstance.up.x, g_GlobalCameraInstance.up.y, g_GlobalCameraInstance.up.z); // eye, at, up
@@ -982,8 +951,6 @@ function renderScene() {
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.clear(gl.COLOR_BUFFER_BIT);
-  // console.log(global_scale);
-
 
   // main body
   var gold_cube = new Cube();
@@ -1043,14 +1010,10 @@ function renderScene() {
     block.renderFast();
   }
 
+  // rendering the map
   renderMap();
-
-
   // now going to render WallE
   renderWallE();
-
-
-  // going to draw the OBJ
 
   // calculating the performance in the very end;
   var duration = performance.now() - start_time;
@@ -1216,30 +1179,10 @@ function click(ev) {
 
   x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
   y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
-  console.log("value of x and y is: ", x, y);
   number_of_minecraft_cubes += 1;
 
-  // we can place it in between the d vector
-  // var distance_vector = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-  // // now we can place it at 1/3rd of the distance
-  // var normalized_eye = distance_vector.divide(distance_vector.length);
-  // // console.log("normals: ", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y);
-  // // console.log("after: ", normalized_eye.x, normalized_eye.y);
-  // // // mine_craft_cube_x_y_coord.push(normalized_eye.x);
-  // // // mine_craft_cube_x_y_coord.push(normalized_eye.y);
-  // mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.x + 0.5);
-  // mine_craft_cube_x_y_coord.push(g_GlobalCameraInstance.eye.y);
-  // mine_craft_cube_x_y_coord.push(- g_GlobalCameraInstance.eye.z);
-  //
-  // // mine_craft_cube_x_y_coord.push(distance_vector.x/3);
-  // // mine_craft_cube_x_y_coord.push(distance_vector.y/3);
-  // var x = Math.floor(g_GlobalCameraInstance.eye.x + distance_vector.x);
-  // var y = Math.floor(g_GlobalCameraInstance.eye.z + distance_vector.z);
   g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
-  console.log("Player's position = ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
-  // console.log("what we added", g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y, g_GlobalCameraInstance.eye.z);
-  // console.log("what we added- 2", distance_vector.x, distance_vector.y, distance_vector.z);
-  // console.log(x, y);
+
 }
 
 // drag functionality
@@ -1265,36 +1208,6 @@ function main() {
     initial_y = ev.clientY;
     console.log("mouse down")
   };
-  // canvas.onmouseup = function(ev) {
-  //   console.log("mouse up: ", ev.buttons);
-  // // if (ev.buttons == 1) {
-  //   mouse_up = 1;
-  //   mouse_down = 0;
-  //   final_x = ev.clientX;
-  //   final_y = ev.clientY;
-  //
-  //   if ((final_x != initial_x) && (final_y != initial_y)) {
-  //     drag = 1;
-  //   } else {
-  //     drag = 0;
-  //   }
-  //
-  //   // if the user dragged on canvas, then we rotate
-  //   if (drag == 1) {
-  //     // rotate along the x axis
-  //     console.log("values: ", final_x, initial_x);
-  //     if (final_x - initial_x > 0) {
-  //       // Pan right?
-  //       g_GlobalCameraInstance.panRight();
-  //       // mouse_rotate_x = - (final_x - initial_x);
-  //     } else {
-  //       // Pan Left
-  //       g_GlobalCameraInstance.panLeftMouse(initial_x, final_x);
-  //       // mouse_rotate_x = initial_x - final_x;
-  //     }
-  //   }
-  // // }
-  // }
 
   canvas.onmousemove = function(ev){
   if (ev.buttons == 1) {
@@ -1352,13 +1265,10 @@ function main() {
 function keydown(ev) {
   if (ev.keyCode == 97) {
     // A is pressed, move left
-    console.log("Moving left");
     g_GlobalCameraInstance.left();
-    // g_eye[0] -= 0.2;
   } else if (ev.keyCode == 100) {
     // D is pressed, move right
     g_GlobalCameraInstance.right();
-    // g_eye[0] += 0.2;
   } else if (ev.keyCode == 119) {
     // W is pressed, move forward
     g_GlobalCameraInstance.forward();
@@ -1370,35 +1280,8 @@ function keydown(ev) {
   } else if (ev.keyCode == 101) {
     g_GlobalCameraInstance.panRight();
   }
-  console.log("Key pressed", ev.keyCode);
   renderScene();
 }
-
-// this function is for rotating the camera angle
-function camera_angle_rotate(angle) {
-  if (angle != 0) {
-    // var direction = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-    //
-    // var r = Math.sqrt((direction.x**2) + (direction.y**2));
-    //
-    // // var tan_theta = direction.y / direction.x;
-    // var tan_theta = direction.x / direction.y;
-    // var theta = Math.atan(tan_theta); // this will be in radians
-    // var radian_angle = angle * (Math.PI/180);
-    // var final_angle = theta + radian_angle;
-    //
-    // var x_new = r * Math.cos(final_angle);
-    // var y_new = r * Math.sin(final_angle);
-    //
-    // direction.x = x_new;
-    // direction.y = y_new;
-    //
-    // g_GlobalCameraInstance.at = g_GlobalCameraInstance.eye.add(direction);
-
-    renderScene();
-  }
-}
-
 
 var start_time = performance.now() / 1000.0;
 var seconds = performance.now() / 1000.0 - start_time;
