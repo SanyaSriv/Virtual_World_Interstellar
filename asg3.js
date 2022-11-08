@@ -789,6 +789,7 @@ function renderWallE() {
     right_arm.matrix.rotate(180, 1, 0, 0);
     right_arm.matrix.rotate(- arm_vertical_movement, 1, 0, 0);
     // adding shift animation
+    console.log(shift_animation_hands_up);
     right_arm.matrix.rotate(- shift_animation_hands_up, 1, 0, 0);
     var right_arm_reference_matrix = new Matrix4(right_arm.matrix);
     right_arm.matrix.scale(0.06, 0.05, 0.12);
@@ -1402,12 +1403,13 @@ function camera_angle_rotate(angle) {
 var start_time = performance.now() / 1000.0;
 var seconds = performance.now() / 1000.0 - start_time;
 var ticker = 0;
+
 function tick() {
   seconds = performance.now() / 1000.0 - start_time;
   ticker += 1;
   // console.log(performance.now());
 
-  // setAnnimationAngles();
+  setAnnimationAngles();
 
   renderScene();
 
@@ -1434,9 +1436,11 @@ var shift_leg_rotation = 0;
 
 function setAnnimationAngles() {
   // trying to say a hello in the animation
+  // console.log("Value of tick is: ", ticker);
   if (hello_animation_state == 1) {
     // then wall-e should bend its eyes down
     if (ticker < 30) {
+      // console.log("in here");
       animation_neck_lower -= 1; // move lower neck down
     }
     if ((30 < ticker) && (ticker < 60)) {
@@ -1480,6 +1484,7 @@ function setAnnimationAngles() {
     }
     // finanly wave
     if ((430 < ticker) && (ticker < 460)) {
+      // console.log("in here9000");
       annimation_open_hand += 2;
     }
     if ((460 < ticker) && (ticker < 490)) {
