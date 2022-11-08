@@ -75,7 +75,7 @@ let left_forearm_scale = 100;
 let hand_open_close_movement = 0;
 let hand_rotation = 0;
 let upper_neck_rotation = 0;
-let global_scale = 100;
+let global_scale = 1;
 let special_shift_animation = 0;
 let mouse_rotate_x = 0;
 let mouse_rotate_y = 0;
@@ -108,7 +108,7 @@ function AddActionsToHtmlUI() {
   document.getElementById("hands_open_close").addEventListener('mousemove', function() {hand_open_close_movement = this.value; renderScene();});
   document.getElementById("hands_rotate").addEventListener('mousemove', function() {hand_rotation = this.value; renderScene();});
   document.getElementById("neck_upper_rotate").addEventListener('mousemove', function() {upper_neck_rotation = this.value; renderScene();});
-  document.getElementById("global_scale").addEventListener('mousemove', function() {global_scale = this.value; renderScene();});
+  document.getElementById("global_scale").addEventListener('mousemove', function() {global_scale = this.value / 100; renderScene();});
   document.getElementById("hello_animation_on").addEventListener('mousedown', function() {hello_animation_state = 1; ticker = 0;});
   document.getElementById("hello_animation_off").addEventListener('mousedown', function() {hello_animation_state = 0; ticker = 0;});
   // trying to add the shift ket animation
@@ -255,13 +255,27 @@ function add_block() {
 
   g_GlobalCameraInstance.player_position_x = Math.round(new_position.x) + 16;
   g_GlobalCameraInstance.player_position_y = Math.round(new_position.z) + 11;
-
+  // console.log(Math.round(new_position.x), Math.round((new_position.x + 16) / 1.2));
+  if (g_GlobalCameraInstance.player_position_x > 31) {
+    g_GlobalCameraInstance.player_position_x = 31;
+  }
+  if (g_GlobalCameraInstance.player_position_y > 31) {
+    g_GlobalCameraInstance.player_position_y = 31;
+  }
+  if (g_GlobalCameraInstance.player_position_x < 0) {
+    g_GlobalCameraInstance.player_position_x = 0;
+  }
+  if (g_GlobalCameraInstance.player_position_y < 0) {
+    g_GlobalCameraInstance.player_position_y = 0;
+  }
   console.log("add: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
   g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
-  if (texture_or_color == 0) {
-    g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] = 0;
-  } else if (texture_or_color == 1) {
-    g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] = 1;
+  if ((g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y]) == 0) {
+    if (texture_or_color == 0) {
+      g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] = 0;
+    } else if (texture_or_color == 1) {
+      g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] = 1;
+    }
   }
 }
 
@@ -272,7 +286,21 @@ function delete_block() {
 
   g_GlobalCameraInstance.player_position_x = Math.round(new_position.x) + 16;
   g_GlobalCameraInstance.player_position_y = Math.round(new_position.z) + 11;
-  console.log("delete: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
+
+  if (g_GlobalCameraInstance.player_position_x > 31) {
+    g_GlobalCameraInstance.player_position_x = 31;
+  }
+  if (g_GlobalCameraInstance.player_position_y > 31) {
+    g_GlobalCameraInstance.player_position_y = 31;
+  }
+  if (g_GlobalCameraInstance.player_position_x < 0) {
+    g_GlobalCameraInstance.player_position_x = 0;
+  }
+  if (g_GlobalCameraInstance.player_position_y < 0) {
+    g_GlobalCameraInstance.player_position_y = 0;
+  }
+
+  // console.log("delete: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
   if (g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] > 0) {
     g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] -= 1;
   }
@@ -414,7 +442,7 @@ function renderWallE() {
 
     gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotate.elements);
 
-    var reflection_matrix = new Matrix4([-1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
+    var reflection_matrix = new Matrix4([1,0,0,0, 0,-1,0,0, 0,0,-1,0, 0,0,0,1])
 
     x_factor = 2
     // console.log(global_scale);
@@ -422,75 +450,74 @@ function renderWallE() {
     var body = new Cube();
     body.color = [254/255, 175/255, 52/255, 1.0];
     body.matrix.setTranslate(-0.5 + x_factor, -0.5, -0.5);
-    body.matrix.scale(0.5, 0.5, 0.5);
+    body.matrix.scale(0.5 , 0.5 , 0.5 );
     body.renderFast();
 
     //body detail
     var body_detail = new Cube();
     body_detail.color = [207/255,167/255,105/255, 1.0];
     body_detail.matrix.setTranslate(-0.35 + x_factor, -0.20, -0.52);
-    body_detail.matrix.scale(0.35, 0.2, 0.03);
+    body_detail.matrix.scale(0.35 , 0.2 , 0.03 );
     body_detail.renderFast();
 
     var battery_screen = new Cube();
     battery_screen.color = [0.0, 0.0, 0.0, 1.0];
     battery_screen.matrix.setTranslate(-0.15 + x_factor, -0.15, -0.53);
-    battery_screen.matrix.scale(0.08, 0.12, 0.05);
-    battery_screen.matrix.multiply(reflection_matrix);
+    battery_screen.matrix.scale(0.08 , 0.12 , 0.05 );
     battery_screen.renderFast();
 
     var battery_bar_1 = new Cube();
     battery_bar_1.color = [224/255, 231/255, 34/255, 1.0];
     battery_bar_1.matrix.translate(-0.128 + x_factor, -0.14, -0.54);
-    battery_bar_1.matrix.scale(0.04, 0.01, 0.01);
+    battery_bar_1.matrix.scale(0.04 , 0.01 , 0.01 );
     battery_bar_1.renderFast();
 
     var battery_bar_2 = new Cube();
     battery_bar_2.color = [224/255, 231/255, 34/255, 1.0];
     battery_bar_2.matrix.translate(-0.128 + x_factor, -0.12, -0.54);
-    battery_bar_2.matrix.scale(0.04, 0.01, 0.01);
+    battery_bar_2.matrix.scale(0.04 , 0.01 , 0.01 );
     battery_bar_2.renderFast();
 
     var battery_bar_3 = new Cube();
     battery_bar_3.color = [224/255, 231/255, 34/255, 1.0];
     battery_bar_3.matrix.translate(-0.128 + x_factor, -0.10, -0.54);
-    battery_bar_3.matrix.scale(0.04, 0.01, 0.01);
+    battery_bar_3.matrix.scale(0.04 , 0.01 , 0.01 );
     battery_bar_3.renderFast();
 
     var red_button = new Cylinder();
     red_button.color = [1, 0, 0, 1.0];
     red_button.matrix.translate(-0.2 + x_factor, -0.129, -0.53);
-    red_button.matrix.scale(0.04, 0.04, 0.01);
+    red_button.matrix.scale(0.04 , 0.04 , 0.01 );
     red_button.render();
 
     var body_grill = new Cube();
     body_grill.color = [94/255, 110/255, 115/255, 1.0];
     body_grill.matrix.translate(-0.3 + x_factor, -0.095, -0.53);
-    body_grill.matrix.scale(0.12, 0.06, 0.01);
+    body_grill.matrix.scale(0.12 , 0.06 , 0.01 );
     body_grill.renderFast();
 
     var grill_bar_1 = new Cube();
     grill_bar_1.color = [0.0, 0.0, 0.0, 1.0];
     grill_bar_1.matrix.translate(-0.28 + x_factor, -0.088, -0.54);
-    grill_bar_1.matrix.scale(0.037, 0.01, 0.001);
+    grill_bar_1.matrix.scale(0.037 , 0.01 , 0.001 );
     grill_bar_1.renderFast();
 
     var grill_bar_2 = new Cube();
     grill_bar_2.color = [0.0, 0.0, 0.0, 1.0];
     grill_bar_2.matrix.translate(-0.23 + x_factor, -0.088, -0.54);
-    grill_bar_2.matrix.scale(0.037, 0.01, 0.001);
+    grill_bar_2.matrix.scale(0.037 , 0.01 , 0.001 );
     grill_bar_2.renderFast();
 
     var grill_bar_3 = new Cube();
     grill_bar_3.color = [0.0, 0.0, 0.0, 1.0];
     grill_bar_3.matrix.translate(-0.28 + x_factor, -0.074, -0.54);
-    grill_bar_3.matrix.scale(0.037, 0.01, 0.001);
+    grill_bar_3.matrix.scale(0.037 , 0.01 , 0.001 );
     grill_bar_3.renderFast();
 
     var grill_bar_4 = new Cube();
     grill_bar_4.color = [0.0, 0.0, 0.0, 1.0];
     grill_bar_4.matrix.translate(-0.23 + x_factor, -0.074, -0.54);
-    grill_bar_4.matrix.scale(0.037, 0.01, 0.001);
+    grill_bar_4.matrix.scale(0.037 , 0.01 , 0.001 );
     grill_bar_4.renderFast();
 
     var grill_bar_5 = new Cube();
@@ -632,27 +659,28 @@ function renderWallE() {
     e_1.color = [1,1,1, 1.0];
     e_1.matrix.setTranslate(-0.0225 + x_factor, -0.45, -0.5102);
     e_1.matrix.rotate(90, 0, 0, 1);
-    e_1.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.01);
+    e_1.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.019);
+    e_1.matrix.multiply(reflection_matrix);
     e_1.renderFast();
 
     var e_2 = new Cube();
     e_2.color = [1,1,1, 1.0];
     e_2.matrix.setTranslate(-0.025 + x_factor, -0.435, -0.5102);
     e_2.matrix.rotate(90, 0, 0, 1);
-    e_2.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.01);
+    e_2.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.019);
     e_2.renderFast();
 
     var e_3 = new Cube();
     e_3.color = [1,1,1, 1.0];
     e_3.matrix.setTranslate(-0.025 + x_factor, -0.42, -0.5102);
     e_3.matrix.rotate(90, 0, 0, 1);
-    e_3.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.01);
+    e_3.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.019);
     e_3.renderFast();
 
     var e_4 = new Cube();
     e_4.color = [1,1,1, 1.0];
     e_4.matrix.setTranslate(-0.065 + x_factor, -0.45, -0.5102);
-    e_4.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.01);
+    e_4.matrix.scale(0.010 * wall_e_letter_scale, 0.05 * wall_e_letter_scale, 0.019);
     e_4.renderFast();
 
     // we will be defining all code related to Wall-e's legs here
@@ -765,7 +793,6 @@ function renderWallE() {
     right_arm.matrix.rotate(180, 1, 0, 0);
     right_arm.matrix.rotate(- arm_vertical_movement, 1, 0, 0);
     // adding shift animation
-    console.log(shift_animation_hands_up);
     right_arm.matrix.rotate(- shift_animation_hands_up, 1, 0, 0);
     var right_arm_reference_matrix = new Matrix4(right_arm.matrix);
     right_arm.matrix.scale(0.06, 0.05, 0.12);
@@ -904,7 +931,7 @@ function renderWallE() {
     var left_eye_cornea = new Cylinder();
     left_eye_cornea.color = [9/255, 24/255, 49/255, 1.0];
     left_eye_cornea.matrix = left_inner_eye_reference_matrix;
-    left_eye_cornea.matrix.translate(-0.07, 0.07, -0.05);
+    left_eye_cornea.matrix.translate(-0.07, 0.07, -0.06);
     left_eye_cornea.matrix.scale(0.55, 0.55, 0.002);
     left_eye_cornea.render();
 
@@ -955,7 +982,7 @@ function renderScene() {
   // main body
   var gold_cube = new Cube();
   gold_cube.color = [1, 0, 0, 1.0];
-  gold_cube.matrix.translate(0, -0.74, 0);
+  gold_cube.matrix.translate(0.01, -0.74, 0);
   gold_cube.matrix.scale(0.5, 0.5, 0.5);
   gold_cube.textureNum = 5;
   gold_cube.renderFast();
@@ -1206,7 +1233,7 @@ function main() {
     mouse_up = 0;
     initial_x = ev.clientX;
     initial_y = ev.clientY;
-    console.log("mouse down")
+    // console.log("mouse down")
   };
 
   canvas.onmousemove = function(ev){
@@ -1269,6 +1296,7 @@ function keydown(ev) {
   } else if (ev.keyCode == 100) {
     // D is pressed, move right
     g_GlobalCameraInstance.right();
+    // g_eye[0] += 0.2;
   } else if (ev.keyCode == 119) {
     // W is pressed, move forward
     g_GlobalCameraInstance.forward();
@@ -1290,7 +1318,6 @@ var ticker = 0;
 function tick() {
   seconds = performance.now() / 1000.0 - start_time;
   ticker += 1;
-  // console.log(performance.now());
 
   setAnnimationAngles();
 
@@ -1319,11 +1346,9 @@ var shift_leg_rotation = 0;
 
 function setAnnimationAngles() {
   // trying to say a hello in the animation
-  // console.log("Value of tick is: ", ticker);
   if (hello_animation_state == 1) {
     // then wall-e should bend its eyes down
     if (ticker < 30) {
-      // console.log("in here");
       animation_neck_lower -= 1; // move lower neck down
     }
     if ((30 < ticker) && (ticker < 60)) {
@@ -1332,79 +1357,61 @@ function setAnnimationAngles() {
     if ((60 < ticker) && (ticker < 80)) {
       animation_neck_upper -= 2;
     }
-    if ((80 < ticker) && (ticker < 160)) {
-      annimation_zoom += 0.01
-    }
-    if ((160 < ticker) && (ticker < 190)) {
-      // wait for 30 ticks
-    }
-    if ((190 < ticker) && (ticker < 210)) {
+    if ((80 < ticker) && (ticker < 100)) {
       // now move your eyebrows to represent that wall-e's happy
       animation_eyebrow -= 0.007;
     }
-    if ((210 < ticker) && (ticker < 240)) {
-      // wait for 30 ticks and do nothing in between
-    }
-    if ((240 < ticker) && (ticker < 260)) {
+    if ((100 < ticker) && (ticker < 120)) {
       // now move your eyebrows to represent that wall-e noticed the user
       animation_eyebrow += 0.007;
     }
-    if ((260 < ticker) && (ticker < 280)) {
+    if ((120 < ticker) && (ticker < 140)) {
       // now move your eyebrows to represent that wall-e's happy
       animation_eyebrow -= 0.007;
     }
-    if ((280 < ticker) && (ticker < 310)) {
-      // wait for 30 ticks and do nothing in between
-    }
-    if ((310 < ticker) && (ticker < 330)) {
+    if ((140 < ticker) && (ticker < 160)) {
       // now move your eyebrows to represent that wall-e noticed the user
       animation_eyebrow += 0.007;
-    }
-    if ((330 < ticker) && (ticker < 430)) {
-      if (annimation_zoom > 1.000) {
-        annimation_zoom -= 0.01
-      }
     }
     // finanly wave
-    if ((430 < ticker) && (ticker < 460)) {
-      // console.log("in here9000");
+    if ((160 < ticker) && (ticker < 190)) {
       annimation_open_hand += 2;
     }
-    if ((460 < ticker) && (ticker < 490)) {
+    if ((190 < ticker) && (ticker < 220)) {
       annimation_raise_hand += 2;
     }
     // now we will do a hello for 20 ticks
-    if ((490 < ticker) && (ticker < 510)) {
+    if ((220 < ticker) && (ticker < 240)) {
       annimation_raise_hand -= 1;
     }
-    if ((510 < ticker) && (ticker < 530)) {
+    if ((240 < ticker) && (ticker < 260)) {
       annimation_raise_hand += 1;
     }
-    if ((530 < ticker) && (ticker < 550)) {
+    if ((260 < ticker) && (ticker < 280)) {
       annimation_raise_hand -= 1;
     }
-    if ((550 < ticker) && (ticker < 570)) {
+    if ((280 < ticker) && (ticker < 300)) {
       annimation_raise_hand += 1;
     }
 
-    if ((570 < ticker) && (ticker < 600)) {
+    if ((300 < ticker) && (ticker < 330)) {
       annimation_raise_hand -= 2;
     }
     // hello done - now resume back to normal position
-    if ((600 < ticker) && (ticker < 630)) {
+    if ((330 < ticker) && (ticker < 360)) {
       annimation_open_hand -= 2;
     }
 
     // return back to the original position of the neck
-    if ((630 < ticker) && (ticker < 660)) {
+    if ((360 < ticker) && (ticker < 390)) {
       animation_neck_lower += 1;
     }
 
-    if ((660 < ticker) && (ticker < 670)) {
+    if ((390 < ticker) && (ticker < 400)) {
       animation_neck_upper += 1;
     }
 
-    if (ticker > 700) {
+    if (ticker > 405) {
       // at this point 1 set of animation is complete, and we can loop over this again
       // reset
       ticker = 0;
@@ -1424,7 +1431,6 @@ function setAnnimationAngles() {
   }
   if (special_shift_animation == true) {
     // in this animation, we can rotate WallE quickly and then let it do a quick thing
-    // console.log(special_shift_animation)
     if ((0 < ticker) && (ticker < 60)) {
       shift_animation_rotation += 3;
       shift_animation_hands_up += 1;

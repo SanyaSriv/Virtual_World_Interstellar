@@ -21,7 +21,7 @@ class Camera {
     distance_vector = distance_vector.divide(distance_vector.length());
     this.eye = this.eye.add(distance_vector);     // eye = eye + d
     this.at = this.at.add(distance_vector);       // at = at + d
-    console.log("lp",this.eye.x, this.eye.y, this.eye.z);
+    // console.log("lp",this.eye.x, this.eye.y, this.eye.z);
 
     // changing the player's position as well
     this.player_position_y -= 1;
@@ -81,10 +81,8 @@ class Camera {
     // right nor it is not stoing the correct value
     this.total_rotation += 2;
     var rotation_value = this.total_rotation % 360;
-    console.log("prev and new: ", prev_rot_value, rotation_value);
     if ((rotation_value <= 40) && (rotation_value > 0)) {
       if (!((prev_rot_value <= 40) && (prev_rot_value > 0))) {
-        console.log("In this first statement");
         // this.player_position_x -= 1;
         this.player_position_y -= 1;
         this.player_position_y -= 1;
@@ -93,7 +91,6 @@ class Camera {
       }
     } else if ((rotation_value <= 90) && (rotation_value > 40)) {
       if (!((prev_rot_value <= 90) && (prev_rot_value > 40))) {
-        console.log("In this second statement");
         this.player_position_x += 1;
         this.player_position_x += 1;
         this.previous_rotation_value = this.total_rotation;

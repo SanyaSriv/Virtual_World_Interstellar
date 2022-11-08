@@ -15,41 +15,45 @@
     <p style="float:right;clear:right;display:block;padding-right: 55px; padding-top: 5px; text-align: left;">
     <strong> Virtual World: Black Hole Space Station </strong>
     <br>
+    <br> Blocky Animal Added: Wall - E from assignment 2
+    <br>
     <br> Hello traveller! This world is a space station surrounded by
     <br> black holes on all sides.
-    <br> About this world:
-    <br> - This space station has 3 pyramids. Use the keys A and D to go left
+    <br> About this world (or Game):
+    <br> <strong> To escape the black hole, you will have to find a few things/materials. </strong>
+    <br> - This space station has 3 pyramids (yellow top, blue top, and
+    <br> textured top). Use the keys A and D to go left
     <br> and right to explore all pyramids. Every pyramid has
     <br> some material (gold, silver, or energy: represented by a neon cube)
     <br> hidden inside it.
     <br> - If you want to get that material, go near the pyramid, and try to
     <br> remove the blocks. Blocks can be removed by clicking on the
-    <br> "Delete block key". Remove them, and get the material!
-    <br> - You can build add your own blocks too by clicking on the "Add textured"
-    <br> block button. If you click that, a block will be added in front of you.
-    <br> To delete it, you can press the "Delete block key".
-    <br> To escape the black hole, you will have to find a few things/materials.
+    <br> "Delete Block" button. Remove them, and get the material!
+    <br> - You can build add your own blocks too by clicking on the "Add Block Textured"
+    <br> button. If you click that, a block will be added in front of you.
+    <br> To delete it, you can press the "Delete Block" button.
     <br> - You also have your personal robot assistant: Mr. Wall-E. You can
-    <br> control Wall-E by the sliders below the virtual world.
-    <br> - If you want WALL-E to wave a hello: press on the Annimation On button.
-    <br> To stop the annimation, press on the annimation off button.
+    <br> control Wall-E by the sliders below the virtual world. Move ahead in this
+    <br> world (by pressing W) to go close to Wall-E.
+    <br> - If you want WALL-E to wave a hello: press on the "Animation On" button.
+    <br> To stop the annimation, press on the "Animation Off" button.
     <br> - <strong> Press shift to get a view of the whole world and for Wall-E to do something funky. </strong>
     <br> - To move around, use the following keys: A, S, D, W, Q, and E.
     <br> You can also use your mouse to turn left and right.
-    <br> - Also, as a traveller you must know that in this world, all the letters
-    <br> have lateral inversion and this and we justify it by the curvature of
+    <br> - Also, as a traveller, you must know that in this world, all the letters
+    <br> have lateral inversion and we justify it by the curvature of
     <br> space time as we are in the middle of 4 black holes.
-    <br> here in are inverted and we reason it as a result of the curvature of space time.
-    <br> You can use a number of keys to control Wall E.
     <br> - Another feature of this futuristic world: There are no collisions. If you
     <br> keep walking, you might as well go inside a block. The general laws of
     <br> physics seem to be broken here.
     <br> <br>
+    <br> Fun fact: Normally if you add a block, you will add a textured block. But if you
+    <br> add it on top of a colored block such as the magenta block on the boundry, you will
+    <br> get a colored block!
     All the best for your journey!
-    <br> Beaware of the Magenta boundaries!
     <br> <br>
-    Performance Note: I noticed that my application performs very significantly better on Safari
-    <br> than compared to Chrome.
+    <strong> Performance Observation Note: I noticed that my application is way faster on Safari
+    <br> than on Chrome. </strong>
     </p>
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
@@ -64,13 +68,13 @@
     <script src="lib/cuon-matrix.js"></script>
     <script src="Camera.js"></script>
     <script src="Vector.js"></script>
-    <script src="object_reader_file.js"></script>
     <br><br>
     <p id="fps"> XXX </p>
-    <label>Animation:</label>
+    <label>Add/Delete blocks:</label>
     <input for="name" type="button" id="Add_block" value="Add Block Textured"></input>
     <input for="name" type="button" id="Delete_block" value="Delete Block"></input>
     <br><br>
+    <label>Animation:</label>
     <input for="name" type="button" id="hello_animation_on" value="Animation On"></input>
     <input for="name" type="button" id="hello_animation_off" value="Animation Off"></input>
     <br> <br>
@@ -80,7 +84,7 @@
     <input type="range" id="camera_angle2" min=0 max=90 value=0 class="slider"></input>
     <br>
     <label for="name">Global scaling</label>
-    <input type="range" id="global_scale" min=50 max=150 value=100 class="slider"></input>
+    <input type="range" id="global_scale" min=100 max=200 value=100 class="slider"></input>
     <br>
     <label for="name">Legs: Vertical</label>
     <input type="range" id="wall_e_leg_vertical" min=0 max=100 value=50 class="slider"></input>
