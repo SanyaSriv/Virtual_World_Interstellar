@@ -223,6 +223,15 @@ function scaleVerticalArmMovement() {
 }
 
 function add_block() {
+  var diff = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  diff = diff.divide(diff.length());
+  var new_position = g_GlobalCameraInstance.eye.add(diff);
+
+  g_GlobalCameraInstance.player_position_x = Math.round(new_position.x) + 16;
+  g_GlobalCameraInstance.player_position_y = Math.round(new_position.z) + 11;
+
+  console.log("x and y = ", new_position.x, new_position.z);
+
   console.log("add: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
   g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
   if (texture_or_color == 0) {
@@ -233,6 +242,12 @@ function add_block() {
 }
 
 function delete_block() {
+  var diff = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  diff = diff.divide(diff.length());
+  var new_position = g_GlobalCameraInstance.eye.add(diff);
+
+  g_GlobalCameraInstance.player_position_x = Math.round(new_position.x) + 16;
+  g_GlobalCameraInstance.player_position_y = Math.round(new_position.z) + 11;
   console.log("delete: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
   if (g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] > 0) {
     g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] -= 1;
@@ -902,17 +917,17 @@ function renderScene() {
   // gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMatrix.elements);
 
   // var projMatrix = new Matrix4();
-  console.log(g_GlobalCameraInstance.fov);
+  // console.log(g_GlobalCameraInstance.fov);
   g_GlobalCameraInstance.projMatrix.setPerspective(g_GlobalCameraInstance.fov, canvas.width/canvas.height, 0.1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, g_GlobalCameraInstance.projMatrix.elements);
 
   // setting up the view matrix
   var viewMat = new Matrix4();
   // viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2], g_at[0],g_at[1],g_at[2], g_up[0],g_up[1],g_up[2]); // eye, at, up
-  console.log(g_GlobalCameraInstance.eye.x + Math.cos(globalFOV * Math.PI/180) * 5, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z + Math.sin(globalFOV * Math.PI/180) * 5);
-  var diff = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-  console.log(diff.length(), "sgf");
-  console.log("at = ", g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
+  // console.log(g_GlobalCameraInstance.eye.x + Math.cos(globalFOV * Math.PI/180) * 5, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z + Math.sin(globalFOV * Math.PI/180) * 5);
+  // var diff = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  // console.log(diff.length(), "sgf");
+  // console.log("at = ", g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
   viewMat.setLookAt(g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z,
                     g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z,
                     g_GlobalCameraInstance.up.x, g_GlobalCameraInstance.up.y, g_GlobalCameraInstance.up.z); // eye, at, up

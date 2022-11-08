@@ -83,47 +83,56 @@ class Camera {
     var rotation_value = this.total_rotation % 360;
     console.log("prev and new: ", prev_rot_value, rotation_value);
     if ((rotation_value <= 40) && (rotation_value > 0)) {
-      if (!(0 < prev_rot_value <= 40)) {
+      if (!((prev_rot_value <= 40) && (prev_rot_value > 0))) {
         console.log("In this first statement");
         // this.player_position_x -= 1;
+        this.player_position_y -= 1;
         this.player_position_y -= 1;
         this.player_position_x += 1
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 90) && (rotation_value > 40)) {
-      if (!(40 < prev_rot_value <= 90)) {
+      if (!((prev_rot_value <= 90) && (prev_rot_value > 40))) {
         console.log("In this second statement");
+        this.player_position_x += 1;
         this.player_position_x += 1;
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 130) && (rotation_value > 90)) {
-      if (!(90 < prev_rot_value <= 130)) {
+      if (!((prev_rot_value <= 130) && (prev_rot_value> 90))) {
+        this.player_position_x += 1;
         this.player_position_x += 1;
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 180) && (rotation_value > 130)) {
-      if (!(130 < prev_rot_value <= 180)) {
+      if ((prev_rot_value <= 130) && (prev_rot_value > 90)) {
+        this.player_position_y += 1;
         this.player_position_y += 1;
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 220) && (rotation_value > 180)) {
-      if (!(180 < prev_rot_value <= 220)) {
+      if (!((prev_rot_value <= 220) && (prev_rot_value > 180))) {
+        this.player_position_y += 1;
         this.player_position_y += 1;
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 270) && (rotation_value > 220)) {
-      if (!(220 < prev_rot_value <= 270)) {
-        this.player_position_y += 1;
+      if (!((prev_rot_value <= 270) && (prev_rot_value > 220))) {
+        this.player_position_x -= 1;
+        this.player_position_x -= 1;
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 310) && (rotation_value > 270)) {
-      if (!(270 < prev_rot_value <= 310)) {
+      if (!((prev_rot_value <= 310) && (prev_rot_value > 270))) {
+        this.player_position_x -= 1;
         this.player_position_x -= 1;
         this.previous_rotation_value = this.total_rotation;
       }
     } else if ((rotation_value <= 360) && (rotation_value > 310)) {
-      if (!(310 < prev_rot_value <= 360)) {
+      if (!((prev_rot_value <= 360) && (prev_rot_value > 310))) {
         this.player_position_x -= 1;
+        this.player_position_y += 1;
+        this.player_position_y += 1;
         this.previous_rotation_value = this.total_rotation;
       }
     }
