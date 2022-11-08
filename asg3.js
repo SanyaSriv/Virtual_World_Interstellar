@@ -83,12 +83,15 @@ let animation_leg_rotation = 0;
 let number_of_minecraft_cubes = 0;
 let mine_craft_cube_x_y_coord = [];
 let g_GlobalCameraInstance;
+let texture_or_color = 0;
+let globalFOV = 0;
 // // this will listen to all sliders
 // this is slowing down the program
 function AddActionsToHtmlUI() {
   // listener for camera angle
-  document.getElementById("camera_angle").addEventListener('mousemove', function() {camera_angle_rotate(this.value);});
-  document.getElementById("Add_block").addEventListener('mousedown', function() {add_block();});
+  document.getElementById("camera_angle").addEventListener('mousemove', function() {g_GlobalCameraInstance.fov = parseInt(this.value);});
+  document.getElementById("Add_block").addEventListener('mousedown', function() {texture_or_color = 0; add_block();});
+  // document.getElementById("Add_block_colored").addEventListener('mousedown', function() {texture_or_color = 1; add_block();});
   document.getElementById("Delete_block").addEventListener('mousedown', function() {delete_block();});
   document.getElementById("camera_angle2").addEventListener('mousemove', function() {g_globalAngleVertical = this.value; renderScene();});
   document.getElementById("wall_e_leg_vertical").addEventListener('mousemove', function() {leg_vertical_movement = this.value; scaleVerticalLegMovement();});
@@ -222,6 +225,11 @@ function scaleVerticalArmMovement() {
 function add_block() {
   console.log("add: ", g_GlobalCameraInstance.player_position_x, g_GlobalCameraInstance.player_position_y);
   g_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] += 1;
+  if (texture_or_color == 0) {
+    g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] = 0;
+  } else if (texture_or_color == 1) {
+    g_color_map[g_GlobalCameraInstance.player_position_x][g_GlobalCameraInstance.player_position_y] = 1;
+  }
 }
 
 function delete_block() {
@@ -234,7 +242,7 @@ function delete_block() {
 g_map = [
   [3,1,2,1,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,2,1,2,1,3],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -261,16 +269,17 @@ g_map = [
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
   [3,1,2,1,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,2,1,2,1,3]
 ]
 
 
 
-g_terrain_map = [
-  [0,0,0,0,0,0,0,0,0,0,0,1.2,0.8,0.9,1.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,1.2,0,1.4,0.2,1.4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+g_color_map = [
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -297,8 +306,7 @@ g_terrain_map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ]
@@ -330,11 +338,17 @@ function renderMap() {
           // draw the cube/wall
           var wall = new Cube();
           wall.color = [1, 0,0,1.0];
-          if (k % 2 != 0) {
-            wall.textureNum = 4;
-          } else {
-            wall.textureNum = 3;
+          if (g_color_map[i][j] == 0) {
+            if (k % 2 != 0) {
+              wall.textureNum = 4;
+            } else {
+              wall.textureNum = 3;
+            }
+          } else if (g_color_map[i][j] == 1) {
+            wall.textureNum = -2;
+            wall.color = [235/255, 52/255, 97/255, 1.0];
           }
+
           wall.matrix.translate(0, -0.75 + size_to_add, 0);
           wall.matrix.scale(1.2, 1.2, 1.2);
           wall.matrix.translate(i-16, 0, j-16);
@@ -883,14 +897,23 @@ function renderScene() {
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotate.elements);
 
   // setting up the projection matrix
-  var projMatrix = new Matrix4();
-  projMatrix.setPerspective(50, canvas.width/canvas.height, 0.1, 100);
-  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMatrix.elements);
+  // var projMatrix = new Matrix4();
+  // projMatrix.setPerspective(50, canvas.width/canvas.height, 0.1, 100);
+  // gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMatrix.elements);
+
+  // var projMatrix = new Matrix4();
+  console.log(g_GlobalCameraInstance.fov);
+  g_GlobalCameraInstance.projMatrix.setPerspective(g_GlobalCameraInstance.fov, canvas.width/canvas.height, 0.1, 100);
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, g_GlobalCameraInstance.projMatrix.elements);
 
   // setting up the view matrix
   var viewMat = new Matrix4();
   // viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2], g_at[0],g_at[1],g_at[2], g_up[0],g_up[1],g_up[2]); // eye, at, up
-  viewMat.setLookAt(g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y, g_GlobalCameraInstance.eye.z,
+  console.log(g_GlobalCameraInstance.eye.x + Math.cos(globalFOV * Math.PI/180) * 5, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z + Math.sin(globalFOV * Math.PI/180) * 5);
+  var diff = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+  console.log(diff.length(), "sgf");
+  console.log("at = ", g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z);
+  viewMat.setLookAt(g_GlobalCameraInstance.eye.x, g_GlobalCameraInstance.eye.y , g_GlobalCameraInstance.eye.z,
                     g_GlobalCameraInstance.at.x, g_GlobalCameraInstance.at.y, g_GlobalCameraInstance.at.z,
                     g_GlobalCameraInstance.up.x, g_GlobalCameraInstance.up.y, g_GlobalCameraInstance.up.z); // eye, at, up
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
@@ -960,6 +983,14 @@ function renderScene() {
 
 }
 
+
+function ObjectMaker() {
+  let positions = [];
+  let normals = [];
+  let coordinats = [];
+  readOBJFile('chinese_coin.obj', gl, model, 60, true);
+  draw(gl, gl.program, currentAngle, viewProjMatrix, model);
+}
 function sendTextToHTML(text, htmlID){
   var htmlElm = document.getElementById(htmlID);
   htmlElm.innerHTML = text;
@@ -1259,23 +1290,23 @@ function keydown(ev) {
 // this function is for rotating the camera angle
 function camera_angle_rotate(angle) {
   if (angle != 0) {
-    var direction = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
-
-    var r = Math.sqrt((direction.x**2) + (direction.y**2));
-
-    // var tan_theta = direction.y / direction.x;
-    var tan_theta = direction.x / direction.y;
-    var theta = Math.atan(tan_theta); // this will be in radians
-    var radian_angle = angle * (Math.PI/180);
-    var final_angle = theta + radian_angle;
-
-    var x_new = r * Math.cos(final_angle);
-    var y_new = r * Math.sin(final_angle);
-
-    direction.x = x_new;
-    direction.y = y_new;
-
-    g_GlobalCameraInstance.at = g_GlobalCameraInstance.eye.add(direction);
+    // var direction = g_GlobalCameraInstance.at.subtract(g_GlobalCameraInstance.eye);
+    //
+    // var r = Math.sqrt((direction.x**2) + (direction.y**2));
+    //
+    // // var tan_theta = direction.y / direction.x;
+    // var tan_theta = direction.x / direction.y;
+    // var theta = Math.atan(tan_theta); // this will be in radians
+    // var radian_angle = angle * (Math.PI/180);
+    // var final_angle = theta + radian_angle;
+    //
+    // var x_new = r * Math.cos(final_angle);
+    // var y_new = r * Math.sin(final_angle);
+    //
+    // direction.x = x_new;
+    // direction.y = y_new;
+    //
+    // g_GlobalCameraInstance.at = g_GlobalCameraInstance.eye.add(direction);
 
     renderScene();
   }

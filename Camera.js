@@ -4,12 +4,15 @@ class Camera {
     // define everything here
     // these will start with some default values
     this.eye = new Vector(0, 1, 14);
-    this.at = new Vector(0, 0, -90);
+    this.at = new Vector(0, 0, -100);
     this.up = new Vector(0, 1, 0);
     this.player_position_x = 16;
     this.player_position_y = 24;
     this.total_rotation = 0;
     this.rotation_happened = false;
+    this.previous_rotation_value = 0;
+    this.projMatrix = new Matrix4()
+    this.fov = 50;
   }
 
   forward() {
@@ -74,46 +77,54 @@ class Camera {
     var diff_normal = diff.divide(diff.length());
     this.at = this.eye.add(f_prime_vector);
 
-    var prev_rot_value = this.total_rotation;
+    var prev_rot_value = this.previous_rotation_value % 360; // this needs to store the previous value when the cahnge was made
+    // right nor it is not stoing the correct value
     this.total_rotation += 2;
     var rotation_value = this.total_rotation % 360;
-    console.log("rotation = ", prev_rot_value, this.total_rotation, this.rotation_happened, rotation_value);
-    if ((rotation_value <= 45) && (rotation_value > 0)) {
-      console.log("enteres here", this.player_position_x, this.player_position_y);
-      if ((this.rotation_happened === false)) {
-        this.player_position_x -= 1;
+    console.log("prev and new: ", prev_rot_value, rotation_value);
+    if ((rotation_value <= 40) && (rotation_value > 0)) {
+      if (!(0 < prev_rot_value <= 40)) {
+        console.log("In this first statement");
+        // this.player_position_x -= 1;
         this.player_position_y -= 1;
-        console.log("enteres h", this.player_position_x, this.player_position_y);
-        console.log("comes");
-        this.rotation_happened = true;
+        this.player_position_x += 1
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 90) && (rotation_value > 45)) {
-      if (!(45 < prev_rot_value <= 90)) {
+    } else if ((rotation_value <= 90) && (rotation_value > 40)) {
+      if (!(40 < prev_rot_value <= 90)) {
+        console.log("In this second statement");
         this.player_position_x += 1;
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 135) && (rotation_value > 90)) {
-      if (!(90 < prev_rot_value <= 135)) {
+    } else if ((rotation_value <= 130) && (rotation_value > 90)) {
+      if (!(90 < prev_rot_value <= 130)) {
         this.player_position_x += 1;
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 180) && (rotation_value > 135)) {
-      if (!(135 < prev_rot_value <= 180)) {
+    } else if ((rotation_value <= 180) && (rotation_value > 130)) {
+      if (!(130 < prev_rot_value <= 180)) {
         this.player_position_y += 1;
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 225) && (rotation_value > 180)) {
-      if (!(180 < prev_rot_value <= 225)) {
+    } else if ((rotation_value <= 220) && (rotation_value > 180)) {
+      if (!(180 < prev_rot_value <= 220)) {
         this.player_position_y += 1;
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 270) && (rotation_value > 225)) {
-      if (!(225 < prev_rot_value <= 270)) {
+    } else if ((rotation_value <= 270) && (rotation_value > 220)) {
+      if (!(220 < prev_rot_value <= 270)) {
         this.player_position_y += 1;
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 315) && (rotation_value > 270)) {
-      if (!(270 < prev_rot_value <= 315)) {
+    } else if ((rotation_value <= 310) && (rotation_value > 270)) {
+      if (!(270 < prev_rot_value <= 310)) {
         this.player_position_x -= 1;
+        this.previous_rotation_value = this.total_rotation;
       }
-    } else if ((rotation_value <= 360) && (rotation_value > 315)) {
-      if (!(315 < prev_rot_value <= 360)) {
+    } else if ((rotation_value <= 360) && (rotation_value > 310)) {
+      if (!(310 < prev_rot_value <= 360)) {
         this.player_position_x -= 1;
+        this.previous_rotation_value = this.total_rotation;
       }
     }
 
